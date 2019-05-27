@@ -21,14 +21,27 @@ public class Hero extends Sprite{
 	private void initHero() {
 		
 		missiles = new ArrayList<>();
-		
-		loadImage("src/resources/paladyn/m_pal281.jpg");
+		loadImage("src/resources/paladyn/m_pal281.png");
 		getImageDimensions();
 	}
 	
-	public void move() {
+	public void move(int b_width, int b_height) {
 		x += dx;
 		y += dy;
+		
+		if(x < 1) {
+			x = 1;
+		}
+		if(x > b_width - width) {
+			x = b_width - width;
+		}
+		if(y < 1) {
+			y = 1;
+		}
+		if(y > b_height - height) {
+			y = b_height - height;
+		}
+		
 	}
 
 	public int getDx() {
@@ -51,16 +64,16 @@ public class Hero extends Sprite{
 			fire();
 		}
 		if(key == KeyEvent.VK_LEFT) {
-			dx = -2;
+			dx = -1;
 		}
 		if(key == KeyEvent.VK_RIGHT) {
-			dx = 2;
+			dx = 1;
 		}
 		if(key == KeyEvent.VK_UP) {
-			dy = -2;
+			dy = -1;
 		}
 		if(key == KeyEvent.VK_DOWN) {
-			dy = 2;
+			dy = 1;
 		}
 	}
 	

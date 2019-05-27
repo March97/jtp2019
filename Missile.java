@@ -2,8 +2,7 @@ package jtp2019;
 
 public class Missile extends Sprite {
 	
-	private final int BOARD_WIDTH = 1280;
-	private final int BOARD_HEIGHT = 720;
+	
 	private final int MISSILE_SPEED = 10;
 	private int dx;
 	private int dy;
@@ -23,7 +22,7 @@ public class Missile extends Sprite {
 		getImageDimensions();
 	}
 
-	public void move() {
+	public void move(int b_width, int b_height) {
 		
 		if(dx > 0) {
 			x += MISSILE_SPEED;
@@ -41,7 +40,7 @@ public class Missile extends Sprite {
 			visible = false;
 		}
 		
-		if ( x > BOARD_WIDTH || y > BOARD_HEIGHT || x < 0 || y < 0) {
+		if ( x > b_width || y > b_height || x < 0 || y < 0) {
 			visible = false;
 		}
 	}

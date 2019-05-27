@@ -50,4 +50,8 @@ public class Sprite {
 	public Image getImage() {
 		return image;
 	}	
+	
+	public Rectangle getBounds() {
+		return new Rectangle(x, y, width, height);
+	}
 }
