@@ -10,6 +10,8 @@ public class Hero extends Sprite{
 
 	private int dx;
 	private int dy;
+	private int lastDirectionX;
+	private int lastDirectionY;
 	private List<Missile> missiles;
 
 	public Hero(int x, int y) {
@@ -26,8 +28,13 @@ public class Hero extends Sprite{
 	}
 	
 	public void move(int b_width, int b_height) {
-		x += dx;
-		y += dy;
+		
+		if(dx != 0 || dy != 0) {
+			lastDirectionX = dx;
+			lastDirectionY = dy;
+		}
+		x += 2 * dx;
+		y += 2 * dy;
 		
 		if(x < 1) {
 			x = 1;
@@ -78,7 +85,7 @@ public class Hero extends Sprite{
 	}
 	
 	public void fire() {
-		missiles.add(new Missile(x, y, dx, dy));
+		missiles.add(new Missile(x, y, lastDirectionX, lastDirectionY));
 	}
 	
 	public void keyReleased(KeyEvent e) {

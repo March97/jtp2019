@@ -28,7 +28,7 @@ public class MyPanel extends JPanel implements ActionListener {
 	private final int DELAY = 10; //opoznienie animacji
 	
 	private final int[][] pos = {
-			{200, 200}, {150, 300}, {300, 100}
+			{1200, 200}, {450, 600}, {800, 300}
 	};
 	
 	
@@ -160,7 +160,7 @@ public class MyPanel extends JPanel implements ActionListener {
 			Monster m = monsters.get(i);
 			
 			if(m.isVisible()) {
-				m.move();
+				m.move(hero.getX(), hero.getY(), BOARD_WIDTH, BOARD_HEIGHT);
 			} else {
 				monsters.remove(i);
 			}
@@ -195,8 +195,12 @@ public class MyPanel extends JPanel implements ActionListener {
 
                 if (r1.intersects(r2)) {
                     
+                	monster.getDamage(60);
+                	if(monster.getHealth() <= 0) {
+                		monster.setVisible(false);
+                	}
                     m.setVisible(false);
-                    monster.setVisible(false);
+                    
                 }
             }
         }
