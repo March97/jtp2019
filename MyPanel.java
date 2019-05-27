@@ -24,6 +24,7 @@ public class MyPanel extends JPanel implements ActionListener {
 	private Timer timer;
 	private Hero hero;
 	private List<Monster> monsters;
+	private boolean inGame;
 	private final int DELAY = 10; //opoznienie animacji
 	
 	private final int[][] pos = {
@@ -43,6 +44,7 @@ public class MyPanel extends JPanel implements ActionListener {
 		setFocusable(true);
 		hero = new Hero(HERO_X, HERO_Y);
 		initMonsters();
+		inGame = true;
 		timer = new Timer(DELAY, this);
 		timer.restart();
 	}
@@ -58,9 +60,14 @@ public class MyPanel extends JPanel implements ActionListener {
 	
 	@Override
 	public void paintComponent(Graphics g) {
-		
 		super.paintComponent(g);
-		doDrawing(g);
+		
+		if(inGame) {
+			doDrawing(g);
+		}else {
+			drawGameOver(g);
+		}
+		
 		Toolkit.getDefaultToolkit().sync();
 	}
 	
@@ -89,9 +96,29 @@ public class MyPanel extends JPanel implements ActionListener {
 		g2d.drawString("Monsters left: " + monsters.size(), 5, 15);
 	}
 	
+	private void drawGameOver(Graphics g) {
+		
+		String msg = "Game Over";
+		Font small = new Font("Helvetica", Font.BOLD, 28);
+		FontMetrics fm = getFontMetrics(small);
+		
+		g.setColor(Color.black);
+		g.setFont(small);
+		g.drawString(msg, (BOARD_WIDTH - fm.stringWidth(msg)) / 2, BOARD_HEIGHT / 2);
+	}
+	
+	private void inGame() {
+		
+		if(!inGame) {
+			timer.stop();
+		}
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 
+		inGame();
+		
 		updateMissiles();
 		updateHero();
 		updateMonsters();
@@ -122,6 +149,12 @@ public class MyPanel extends JPanel implements ActionListener {
 	}
 	
 	private void updateMonsters() {
+		if(monsters.isEmpty()) {
+			
+			inGame = false;
+			return;
+		}
+		
 		for(int i = 0; i < monsters.size(); i++) {
 			
 			Monster m = monsters.get(i);
@@ -146,7 +179,7 @@ public class MyPanel extends JPanel implements ActionListener {
                 
                 hero.setVisible(false);
                 monster.setVisible(false);
-                //ingame = false;
+                inGame = false;
             }
         }
 
