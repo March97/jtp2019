@@ -2,7 +2,6 @@ package jtp2019;
 
 public class Missile extends Sprite {
 	
-	
 	private final int MISSILE_SPEED = 10;
 	private int dx;
 	private int dy;

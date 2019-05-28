@@ -1,7 +1,7 @@
 package jtp2019;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.EventQueue;
+import javax.swing.JFrame;
 
 public class Main extends JFrame {
 	

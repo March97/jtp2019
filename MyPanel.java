@@ -1,15 +1,22 @@
 package jtp2019;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-import javax.swing.*;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.JPanel;
+import javax.swing.Timer;
 
 public class MyPanel extends JPanel implements ActionListener {
 
@@ -42,7 +49,22 @@ public class MyPanel extends JPanel implements ActionListener {
 		addKeyListener(new TAdapter());
 		//setBackground(Color.BLACK);
 		setFocusable(true);
-		hero = new Hero(HERO_X, HERO_Y);
+		hero = new Hero(HERO_X, HERO_Y, "src/resources/paladyn/paladyn/pal1-0-0.png",
+										"src/resources/paladyn/paladyn/pal1-1-0.png",
+										"src/resources/paladyn/paladyn/pal1-2-0.png",
+										"src/resources/paladyn/paladyn/pal1-3-0.png",
+										"src/resources/paladyn/paladyn/pal1-0-1.png",
+										"src/resources/paladyn/paladyn/pal1-1-1.png",
+										"src/resources/paladyn/paladyn/pal1-2-1.png",
+										"src/resources/paladyn/paladyn/pal1-3-1.png",
+										"src/resources/paladyn/paladyn/pal1-0-2.png",
+										"src/resources/paladyn/paladyn/pal1-1-2.png",
+										"src/resources/paladyn/paladyn/pal1-2-2.png",
+										"src/resources/paladyn/paladyn/pal1-3-2.png",
+										"src/resources/paladyn/paladyn/pal1-0-3.png",
+										"src/resources/paladyn/paladyn/pal1-1-3.png",
+										"src/resources/paladyn/paladyn/pal1-2-3.png",
+										"src/resources/paladyn/paladyn/pal1-3-3.png");
 		initMonsters();
 		inGame = true;
 		timer = new Timer(DELAY, this);
@@ -151,7 +173,7 @@ public class MyPanel extends JPanel implements ActionListener {
 	private void updateMonsters() {
 		if(monsters.isEmpty()) {
 			
-			inGame = false;
+			//inGame = false;
 			return;
 		}
 		

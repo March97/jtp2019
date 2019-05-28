@@ -1,7 +1,7 @@
 package jtp2019;
 
-import java.awt.*;
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 public class MyFrame extends JFrame{
 

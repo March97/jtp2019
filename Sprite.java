@@ -1,7 +1,9 @@
 package jtp2019;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.Image;
+import java.awt.Rectangle;
+
+import javax.swing.ImageIcon;
 
 public class Sprite {
 	
@@ -49,7 +51,11 @@ public class Sprite {
 
 	public Image getImage() {
 		return image;
-	}	
+	}
+	
+	public void setImage(Image image) {
+		this.image = image;
+	}
 	
 	public Rectangle getBounds() {
 		return new Rectangle(x, y, width, height);
