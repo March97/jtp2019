@@ -49,22 +49,22 @@ public class MyPanel extends JPanel implements ActionListener {
 		addKeyListener(new TAdapter());
 		//setBackground(Color.BLACK);
 		setFocusable(true);
-		hero = new Hero(HERO_X, HERO_Y, "src/resources/paladyn/paladyn/pal1-0-0.png",
-										"src/resources/paladyn/paladyn/pal1-1-0.png",
-										"src/resources/paladyn/paladyn/pal1-2-0.png",
-										"src/resources/paladyn/paladyn/pal1-3-0.png",
-										"src/resources/paladyn/paladyn/pal1-0-1.png",
-										"src/resources/paladyn/paladyn/pal1-1-1.png",
-										"src/resources/paladyn/paladyn/pal1-2-1.png",
-										"src/resources/paladyn/paladyn/pal1-3-1.png",
-										"src/resources/paladyn/paladyn/pal1-0-2.png",
-										"src/resources/paladyn/paladyn/pal1-1-2.png",
-										"src/resources/paladyn/paladyn/pal1-2-2.png",
-										"src/resources/paladyn/paladyn/pal1-3-2.png",
-										"src/resources/paladyn/paladyn/pal1-0-3.png",
-										"src/resources/paladyn/paladyn/pal1-1-3.png",
-										"src/resources/paladyn/paladyn/pal1-2-3.png",
-										"src/resources/paladyn/paladyn/pal1-3-3.png");
+		hero = new Hero(HERO_X, HERO_Y, "src/resources/paladyn/pal1-0-0.png",
+										"src/resources/paladyn/pal1-1-0.png",
+										"src/resources/paladyn/pal1-2-0.png",
+										"src/resources/paladyn/pal1-3-0.png",
+										"src/resources/paladyn/pal1-0-1.png",
+										"src/resources/paladyn/pal1-1-1.png",
+										"src/resources/paladyn/pal1-2-1.png",
+										"src/resources/paladyn/pal1-3-1.png",
+										"src/resources/paladyn/pal1-0-2.png",
+										"src/resources/paladyn/pal1-1-2.png",
+										"src/resources/paladyn/pal1-2-2.png",
+										"src/resources/paladyn/pal1-3-2.png",
+										"src/resources/paladyn/pal1-0-3.png",
+										"src/resources/paladyn/pal1-1-3.png",
+										"src/resources/paladyn/pal1-2-3.png",
+										"src/resources/paladyn/pal1-3-3.png");
 		initMonsters();
 		inGame = true;
 		timer = new Timer(DELAY, this);
@@ -76,7 +76,22 @@ public class MyPanel extends JPanel implements ActionListener {
 		monsters = new ArrayList<>();
 		
 		for(int[] p : pos) {
-			monsters.add(new Monster(p[0], p[1]));
+			monsters.add(new Monster(p[0], p[1], 	"src/resources/monster/monster-0-0.png",
+													"src/resources/monster/monster-1-0.png",
+													"src/resources/monster/monster-2-0.png",
+													"src/resources/monster/monster-3-0.png",
+													"src/resources/monster/monster-0-1.png",
+													"src/resources/monster/monster-1-1.png",
+													"src/resources/monster/monster-2-1.png",
+													"src/resources/monster/monster-3-1.png",
+													"src/resources/monster/monster-0-2.png",
+													"src/resources/monster/monster-1-2.png",
+													"src/resources/monster/monster-2-2.png",
+													"src/resources/monster/monster-3-2.png",
+													"src/resources/monster/monster-0-3.png",
+													"src/resources/monster/monster-1-3.png",
+													"src/resources/monster/monster-2-3.png",
+													"src/resources/monster/monster-3-3.png"));
 		}
 	}
 	
@@ -182,6 +197,7 @@ public class MyPanel extends JPanel implements ActionListener {
 			Monster m = monsters.get(i);
 			
 			if(m.isVisible()) {
+				m.animation(hero.getX(), hero.getY());
 				m.move(hero.getX(), hero.getY(), BOARD_WIDTH, BOARD_HEIGHT);
 			} else {
 				monsters.remove(i);

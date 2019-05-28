@@ -21,7 +21,7 @@ public class Hero extends WalkAnimation{
 	private void initHero() {
 		
 		missiles = new ArrayList<>();
-		loadImage("src/resources/paladyn/paladyn/pal1-0-0.png");
+		loadImage("src/resources/paladyn/pal1-0-0.png");
 		getImageDimensions();
 	}
 	

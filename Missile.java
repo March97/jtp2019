@@ -17,7 +17,7 @@ public class Missile extends Sprite {
 		
 		this.dx = dx;
 		this.dy = dy;
-		loadImage("src/resources/paladyn/fireball.png");
+		loadImage("src/resources/fireball/fireball.png");
 		getImageDimensions();
 	}
 
