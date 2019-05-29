@@ -53,6 +53,14 @@ public class Sprite {
 		return image;
 	}
 	
+	public void setX(int x) {
+		this.x = x;
+	}
+
+	public void setY(int y) {
+		this.y = y;
+	}
+	
 	public void setImage(Image image) {
 		this.image = image;
 	}

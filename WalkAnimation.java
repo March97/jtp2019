@@ -63,5 +63,6 @@ public class WalkAnimation extends Sprite{
 		if(counter > 3)	counter = 0;
 		
 		loadImage(images[toReturn]);
+		getImageDimensions();
 	}
 }

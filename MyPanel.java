@@ -26,16 +26,19 @@ public class MyPanel extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	private final int HERO_X = 50;
 	private final int HERO_Y = 50;
+	private final int NPC_X = 350;
+	private final int NPC_Y = 350;
 	private final int BOARD_WIDTH = 1280;
 	private final int BOARD_HEIGHT = 720;
 	private Timer timer;
 	private Hero hero;
+	private Npc npc;
 	private List<Monster> monsters;
 	private boolean inGame;
-	private final int DELAY = 10; //opoznienie animacji
+	private final int DELAY = 15; //opoznienie animacji
 	
 	private final int[][] pos = {
-			{1200, 200}, {450, 600}, {800, 300}
+			//{1200, 200}, {450, 600}, {800, 300}
 	};
 	
 	
@@ -66,6 +69,7 @@ public class MyPanel extends JPanel implements ActionListener {
 										"src/resources/paladyn/pal1-2-3.png",
 										"src/resources/paladyn/pal1-3-3.png");
 		initMonsters();
+		npc = new Npc(NPC_X, NPC_Y);
 		inGame = true;
 		timer = new Timer(DELAY, this);
 		timer.restart();
@@ -114,6 +118,10 @@ public class MyPanel extends JPanel implements ActionListener {
 		
 		if(hero.isVisible()) {
 			g2d.drawImage(hero.getImage(), hero.getX(), hero.getY(), this);
+		}
+		
+		if(npc.isVisible()) {
+			g2d.drawImage(npc.getImage(), npc.getX(), npc.getY(), this);
 		}
 		
 		List<Missile> missiles = hero.getMissiles();
@@ -208,7 +216,24 @@ public class MyPanel extends JPanel implements ActionListener {
 	public void checkCollisions() {
 
         Rectangle r3 = hero.getBounds();
+        Rectangle r4 = npc.getBounds();
 
+        if (r3.intersects(r4)) {
+            
+        	if(hero.getDx() > 0) {
+        		hero.setX(hero.getX() - 2);
+        	}
+        	if(hero.getDx() < 0) {
+        		hero.setX(hero.getX() + 2);
+        	}
+        	if(hero.getDy() > 0) {
+        		hero.setY(hero.getY() - 2);
+        	}
+        	if(hero.getDy() < 0) {
+        		hero.setY(hero.getY() + 2);
+        	}
+        }
+        
         for (Monster monster : monsters) {
             
             Rectangle r2 = monster.getBounds();
@@ -242,6 +267,8 @@ public class MyPanel extends JPanel implements ActionListener {
                 }
             }
         }
+        
+        
     }
 	
 	public class TAdapter extends KeyAdapter{

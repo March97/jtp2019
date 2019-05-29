@@ -27,7 +27,6 @@ public class Hero extends WalkAnimation{
 	
 	public void move(int b_width, int b_height) {
 		
-		
 		if(dx != 0 || dy != 0) {
 			lastDirectionX = dx;
 			lastDirectionY = dy;
@@ -57,6 +56,14 @@ public class Hero extends WalkAnimation{
 
 	public int getDy() {
 		return dy;
+	}
+	
+	public void setDx(int dx) {
+		this.dx = dx;
+	}
+
+	public void setDy(int dy) {
+		this.dy = dy;
 	}
 
 	public List<Missile> getMissiles() {
@@ -105,6 +112,5 @@ public class Hero extends WalkAnimation{
 			dy = 0;
 		}
 	}
-	
-	
+		
 }
