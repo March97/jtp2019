@@ -44,8 +44,8 @@ public class Hero extends WalkAnimation{
 		if(y < 1) {
 			y = 1;
 		}
-		if(y > b_height - height) {
-			y = b_height - height;
+		if(y > b_height - 1.5 * height) {
+			y = b_height - (int) (1.5 * height);
 		}
 		
 	}

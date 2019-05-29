@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -15,6 +16,8 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -24,15 +27,18 @@ public class MyPanel extends JPanel implements ActionListener {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private final int HERO_X = 50;
-	private final int HERO_Y = 50;
-	private final int NPC_X = 350;
-	private final int NPC_Y = 350;
-	private final int BOARD_WIDTH = 1280;
+	private final int x = 0;
+	private final int y = 0;
+	private final int HERO_X = 650;
+	private final int HERO_Y = 640;
+	private final int NPC_X = 770;
+	private final int NPC_Y = 170;
+	private final int BOARD_WIDTH = 1080;
 	private final int BOARD_HEIGHT = 720;
 	private Timer timer;
 	private Hero hero;
 	private Npc npc;
+	private Image background;
 	private List<Monster> monsters;
 	private boolean inGame;
 	private final int DELAY = 15; //opoznienie animacji
@@ -50,8 +56,10 @@ public class MyPanel extends JPanel implements ActionListener {
 	private void initPanel() {
 	
 		addKeyListener(new TAdapter());
-		//setBackground(Color.BLACK);
+		setBackground(Color.BLACK);
+		setBounds(x, y, BOARD_WIDTH, BOARD_HEIGHT);
 		setFocusable(true);
+		loadBackground("src/resources/city/ithan1.png");
 		hero = new Hero(HERO_X, HERO_Y, "src/resources/paladyn/pal1-0-0.png",
 										"src/resources/paladyn/pal1-1-0.png",
 										"src/resources/paladyn/pal1-2-0.png",
@@ -116,11 +124,14 @@ public class MyPanel extends JPanel implements ActionListener {
 	
 		Graphics2D g2d = (Graphics2D) g;
 		
+		
+		g2d.drawImage(background, 0, 0, this);
+		
 		if(hero.isVisible()) {
 			g2d.drawImage(hero.getImage(), hero.getX(), hero.getY(), this);
 		}
 		
-		if(npc.isVisible()) {
+		if(npc.isVisible()) { 
 			g2d.drawImage(npc.getImage(), npc.getX(), npc.getY(), this);
 		}
 		
@@ -232,6 +243,7 @@ public class MyPanel extends JPanel implements ActionListener {
         	if(hero.getDy() < 0) {
         		hero.setY(hero.getY() + 2);
         	}
+        	//JOptionPane.showMessageDialog(this, "Eggs are not supposed to be green.");
         }
         
         for (Monster monster : monsters) {
@@ -256,6 +268,7 @@ public class MyPanel extends JPanel implements ActionListener {
 
                 Rectangle r2 = monster.getBounds();
 
+                //kolizja z potworem
                 if (r1.intersects(r2)) {
                     
                 	monster.getDamage(60);
@@ -263,13 +276,21 @@ public class MyPanel extends JPanel implements ActionListener {
                 		monster.setVisible(false);
                 	}
                     m.setVisible(false);
-                    
                 }
             }
-        }
-        
-        
+            //kolizja z npc
+            if (r1.intersects(r4)) {
+
+                m.setVisible(false); 
+            }
+        }  
     }
+	
+protected void loadBackground(String imageName) {
+		
+		ImageIcon ii = new ImageIcon(imageName);
+		background = ii.getImage();	
+	}
 	
 	public class TAdapter extends KeyAdapter{
 
