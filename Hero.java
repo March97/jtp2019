@@ -10,6 +10,7 @@ public class Hero extends WalkAnimation{
 	private int dy;
 	private int lastDirectionX;
 	private int lastDirectionY;
+	private final int speed = 2;
 	private List<Missile> missiles;
 
 	public Hero(int x, int y, String a0, String a1, String a2, String a3, String a4, String a5, String a6, String a7, String a8, String a9, String a10, String a11, String a12, String a13, String a14, String a15) {
@@ -31,8 +32,8 @@ public class Hero extends WalkAnimation{
 			lastDirectionX = dx;
 			lastDirectionY = dy;
 		}
-		x += 2 * dx;
-		y += 2 * dy;
+		x += speed * dx;
+		y += speed * dy;
 		animation(dx, dy);
 		
 		if(x < 1) {
@@ -48,6 +49,22 @@ public class Hero extends WalkAnimation{
 			y = b_height - (int) (1.5 * height);
 		}
 		
+	}
+	
+	public void stop() {
+		
+		if(dx > 0) {
+    		x -= speed;
+    	}
+    	if(dx < 0) {
+    		x += speed;
+    	}
+    	if(dy > 0) {
+    		y -= speed;
+    	}
+    	if(dy < 0) {
+    		y += speed;
+    	}
 	}
 
 	public int getDx() {

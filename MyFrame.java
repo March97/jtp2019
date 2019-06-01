@@ -18,7 +18,6 @@ public class MyFrame extends JFrame{
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(1280, 720);
 		setTitle("DM GAME");
-		//setLocation(50, 50);
 		setResizable(false);
 		setVisible(true);
 		
@@ -27,6 +26,7 @@ public class MyFrame extends JFrame{
 		
 		add(mainPanel);
 		add(leftPanel);
+		
 		//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		//setSize(200, 720);
 		//setLocation(1080, 0);

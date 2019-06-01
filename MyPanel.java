@@ -21,7 +21,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-public class MyPanel extends JPanel implements ActionListener {
+public class MyPanel extends JPanel  implements ActionListener {
 
 	/**
 	 * 
@@ -29,12 +29,14 @@ public class MyPanel extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	private final int x = 0;
 	private final int y = 0;
-	private final int HERO_X = 650;
-	private final int HERO_Y = 640;
+	private final int HERO_X = 450;
+	private final int HERO_Y = 250;
 	private final int NPC_X = 770;
 	private final int NPC_Y = 170;
-	private final int BOARD_WIDTH = 1080;
+	private final int BOARD_WIDTH = 1040;
 	private final int BOARD_HEIGHT = 720;
+	private LeftPanel leftPanel;
+	private CityMap cityMap;
 	private Timer timer;
 	private Hero hero;
 	private Npc npc;
@@ -56,9 +58,12 @@ public class MyPanel extends JPanel implements ActionListener {
 	private void initPanel() {
 	
 		addKeyListener(new TAdapter());
-		setBackground(Color.BLACK);
+		//setBackground(Color.BLACK);
 		setBounds(x, y, BOARD_WIDTH, BOARD_HEIGHT);
 		setFocusable(true);
+		leftPanel = new LeftPanel();
+		cityMap = new CityMap();
+		add(leftPanel);
 		loadBackground("src/resources/city/ithan1.png");
 		hero = new Hero(HERO_X, HERO_Y, "src/resources/paladyn/pal1-0-0.png",
 										"src/resources/paladyn/pal1-1-0.png",
@@ -148,8 +153,6 @@ public class MyPanel extends JPanel implements ActionListener {
 				g2d.drawImage(monster.getImage(), monster.getX(), monster.getY(), this);
 			}
 		}
-		g2d.setColor(Color.BLACK);
-		g2d.drawString("Monsters left: " + monsters.size(), 5, 15);
 	}
 	
 	private void drawGameOver(Graphics g) {
@@ -229,20 +232,12 @@ public class MyPanel extends JPanel implements ActionListener {
         Rectangle r3 = hero.getBounds();
         Rectangle r4 = npc.getBounds();
 
+        if(cityMap.tableActions(r3) == 1)
+        	hero.stop();
+        
         if (r3.intersects(r4)) {
             
-        	if(hero.getDx() > 0) {
-        		hero.setX(hero.getX() - 2);
-        	}
-        	if(hero.getDx() < 0) {
-        		hero.setX(hero.getX() + 2);
-        	}
-        	if(hero.getDy() > 0) {
-        		hero.setY(hero.getY() - 2);
-        	}
-        	if(hero.getDy() < 0) {
-        		hero.setY(hero.getY() + 2);
-        	}
+        	hero.stop();
         	//JOptionPane.showMessageDialog(this, "Eggs are not supposed to be green.");
         }
         
@@ -291,7 +286,7 @@ protected void loadBackground(String imageName) {
 		ImageIcon ii = new ImageIcon(imageName);
 		background = ii.getImage();	
 	}
-	
+
 	public class TAdapter extends KeyAdapter{
 
 		@Override
