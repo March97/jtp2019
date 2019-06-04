@@ -12,6 +12,9 @@ public class Hero extends WalkAnimation{
 	private int lastDirectionY;
 	private final int speed = 2;
 	private List<Missile> missiles;
+	private int potions;
+	private int health;
+	private int attack;
 
 	public Hero(int x, int y, String a0, String a1, String a2, String a3, String a4, String a5, String a6, String a7, String a8, String a9, String a10, String a11, String a12, String a13, String a14, String a15) {
 		super(x, y, a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15);
@@ -22,6 +25,9 @@ public class Hero extends WalkAnimation{
 	private void initHero() {
 		
 		missiles = new ArrayList<>();
+		potions = 0;
+		health = 100;
+		attack = 40;
 		loadImage("src/resources/paladyn/pal1-0-0.png");
 		getImageDimensions();
 	}
@@ -67,6 +73,14 @@ public class Hero extends WalkAnimation{
     	}
 	}
 
+	public int getHealth() {
+		return health;
+	}
+
+	public int getAttack() {
+		return attack;
+	}
+
 	public int getDx() {
 		return dx;
 	}
@@ -82,11 +96,30 @@ public class Hero extends WalkAnimation{
 	public void setDy(int dy) {
 		this.dy = dy;
 	}
+	
+	public void getDamage(int damage) {
+		health -= damage;
+	}
 
 	public List<Missile> getMissiles() {
 		return missiles;
 	}
 	
+	public void addPotions() {
+		potions++;
+	}
+	
+	public void usePotions() {
+		potions--;
+		health += 50;
+		if(health >= 100)
+			health = 100;
+	}
+	
+	public int getPotions() {
+		return potions;
+	}
+
 	public void keyPressed(KeyEvent e) {
 		
 		int key = e.getKeyCode();

@@ -21,7 +21,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-public class MyPanel extends JPanel  implements ActionListener {
+public class MyPanel extends JPanel implements ActionListener {
 
 	/**
 	 * 
@@ -35,18 +35,19 @@ public class MyPanel extends JPanel  implements ActionListener {
 	private final int NPC_Y = 170;
 	private final int BOARD_WIDTH = 1040;
 	private final int BOARD_HEIGHT = 720;
-	private LeftPanel leftPanel;
 	private CityMap cityMap;
 	private Timer timer;
 	private Hero hero;
 	private Npc npc;
 	private Image background;
+	private Image leftPanel;
 	private List<Monster> monsters;
 	private boolean inGame;
 	private final int DELAY = 15; //opoznienie animacji
+
 	
 	private final int[][] pos = {
-			//{1200, 200}, {450, 600}, {800, 300}
+			{1200, 200}, {450, 600}, {800, 300}
 	};
 	
 	
@@ -58,13 +59,11 @@ public class MyPanel extends JPanel  implements ActionListener {
 	private void initPanel() {
 	
 		addKeyListener(new TAdapter());
-		//setBackground(Color.BLACK);
 		setBounds(x, y, BOARD_WIDTH, BOARD_HEIGHT);
 		setFocusable(true);
-		leftPanel = new LeftPanel();
 		cityMap = new CityMap();
-		add(leftPanel);
 		loadBackground("src/resources/city/ithan1.png");
+		loadLeftPanel("src/resources/wood/wood2.jpg");
 		hero = new Hero(HERO_X, HERO_Y, "src/resources/paladyn/pal1-0-0.png",
 										"src/resources/paladyn/pal1-1-0.png",
 										"src/resources/paladyn/pal1-2-0.png",
@@ -128,8 +127,6 @@ public class MyPanel extends JPanel  implements ActionListener {
 	private void doDrawing(Graphics g) {
 	
 		Graphics2D g2d = (Graphics2D) g;
-		
-		
 		g2d.drawImage(background, 0, 0, this);
 		
 		if(hero.isVisible()) {
@@ -153,6 +150,14 @@ public class MyPanel extends JPanel  implements ActionListener {
 				g2d.drawImage(monster.getImage(), monster.getX(), monster.getY(), this);
 			}
 		}
+		
+		//rysowanie lewego panelu
+		g2d.drawImage(leftPanel, 1040, 0, this);
+		g2d.setColor(Color.WHITE);
+		Font small = new Font("Helvetica", Font.BOLD, 18);
+		g2d.setFont(small);
+		g2d.drawString("Monsters: " + monsters.size(), 1080, 50);
+		g2d.drawString("Potions: " + hero.getPotions(), 1080, 100);
 	}
 	
 	private void drawGameOver(Graphics g) {
@@ -205,9 +210,12 @@ public class MyPanel extends JPanel  implements ActionListener {
 	private void updateHero() {
 		
 		hero.move(BOARD_WIDTH, BOARD_HEIGHT);
+		if(hero.getHealth() <= 0)
+			inGame = false;
 	}
 	
 	private void updateMonsters() {
+		
 		if(monsters.isEmpty()) {
 			
 			//inGame = false;
@@ -225,6 +233,8 @@ public class MyPanel extends JPanel  implements ActionListener {
 				monsters.remove(i);
 			}
 		}
+		
+		//leftPanel.setMonsters(monsters.size());
 	}
 	
 	public void checkCollisions() {
@@ -238,6 +248,7 @@ public class MyPanel extends JPanel  implements ActionListener {
         if (r3.intersects(r4)) {
             
         	hero.stop();
+        	hero.addPotions();
         	//JOptionPane.showMessageDialog(this, "Eggs are not supposed to be green.");
         }
         
@@ -247,9 +258,8 @@ public class MyPanel extends JPanel  implements ActionListener {
 
             if (r3.intersects(r2)) {
                 
-                hero.setVisible(false);
+            	hero.getDamage(monster.getAttack());
                 monster.setVisible(false);
-                inGame = false;
             }
         }
 
@@ -266,7 +276,7 @@ public class MyPanel extends JPanel  implements ActionListener {
                 //kolizja z potworem
                 if (r1.intersects(r2)) {
                     
-                	monster.getDamage(60);
+                	monster.getDamage(hero.getAttack());
                 	if(monster.getHealth() <= 0) {
                 		monster.setVisible(false);
                 	}
@@ -281,10 +291,21 @@ public class MyPanel extends JPanel  implements ActionListener {
         }  
     }
 	
-protected void loadBackground(String imageName) {
+	public int getMonsters() {
+		
+		return monsters.size();
+	}
+	
+	protected void loadBackground(String imageName) {
 		
 		ImageIcon ii = new ImageIcon(imageName);
 		background = ii.getImage();	
+	}
+	
+	protected void loadLeftPanel(String imageName) {
+		
+		ImageIcon ii = new ImageIcon(imageName);
+		leftPanel = ii.getImage();	
 	}
 
 	public class TAdapter extends KeyAdapter{

@@ -3,6 +3,7 @@ package jtp2019;
 public class Monster extends WalkAnimation {
 	
 	private int health;
+	private final int attack = 60;
 	
 	public Monster (int x, int y, String a0, String a1, String a2, String a3, String a4, String a5, String a6, String a7, String a8, String a9, String a10, String a11, String a12, String a13, String a14, String a15) {
 		super(x, y, a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15);
@@ -60,6 +61,10 @@ public class Monster extends WalkAnimation {
 
 	public int getHealth() {
 		return health;
+	}
+
+	public int getAttack() {
+		return attack;
 	}
 
 	public void setHealth(int health) {

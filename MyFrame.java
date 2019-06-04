@@ -21,18 +21,17 @@ public class MyFrame extends JFrame{
 		setResizable(false);
 		setVisible(true);
 		
-		JPanel mainPanel = new MyPanel();
-		JPanel leftPanel = new LeftPanel();
+		MyPanel mainPanel = new MyPanel();
+		//LeftPanel leftPanel = new LeftPanel();
 		
 		add(mainPanel);
-		add(leftPanel);
+		//add(leftPanel);
 		
 		//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		//setSize(200, 720);
 		//setLocation(1080, 0);
 		//setResizable(false);
 		//setVisible(true);
-		
 		//JDialog d = new JDialog(this, "JDialog ...", true );
        // d.setDefaultCloseOperation(EXIT_ON_CLOSE);
        // d.setSize(300, 300);
