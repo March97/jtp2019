@@ -44,10 +44,11 @@ public class MyPanel extends JPanel implements ActionListener {
 	private List<Monster> monsters;
 	private boolean inGame;
 	private final int DELAY = 15; //opoznienie animacji
+	private int mapSelector;
 
 	
 	private final int[][] pos = {
-			{1200, 200}, {450, 600}, {800, 300}
+			//{1200, 200}, {450, 600}, {800, 300}
 	};
 	
 	
@@ -62,7 +63,11 @@ public class MyPanel extends JPanel implements ActionListener {
 		setBounds(x, y, BOARD_WIDTH, BOARD_HEIGHT);
 		setFocusable(true);
 		cityMap = new CityMap();
-		loadBackground("src/resources/city/ithan1.png");
+		//mapSelector = 0;
+		//loadBackground(cityMap.getCityMap());
+		mapSelector = 3;
+		loadBackground(cityMap.getCaveMap());
+		cityMap.initCave();
 		loadLeftPanel("src/resources/wood/wood2.jpg");
 		hero = new Hero(HERO_X, HERO_Y, "src/resources/paladyn/pal1-0-0.png",
 										"src/resources/paladyn/pal1-1-0.png",
@@ -158,6 +163,7 @@ public class MyPanel extends JPanel implements ActionListener {
 		g2d.setFont(small);
 		g2d.drawString("Monsters: " + monsters.size(), 1080, 50);
 		g2d.drawString("Potions: " + hero.getPotions(), 1080, 100);
+		g2d.drawString("( " + hero.getX() + ", " + hero.getY() + " )", 1180, 680);
 	}
 	
 	private void drawGameOver(Graphics g) {
@@ -237,6 +243,60 @@ public class MyPanel extends JPanel implements ActionListener {
 		//leftPanel.setMonsters(monsters.size());
 	}
 	
+	public void mapSelect() {
+		
+		if(mapSelector == 0 && hero.getY() > 550) {
+			mapSelector = 1;
+			loadBackground(cityMap.getIndoorMap());
+			cityMap.initIndoor();
+			npc.setVisible(false);
+			npc.setX(10000);
+			npc.setY(10000);
+			hero.setX(364);
+			hero.setY(533);
+		} else
+		if(mapSelector == 0) {
+			mapSelector = 2;
+			loadBackground(cityMap.getTavernMap());
+			cityMap.initTavern();
+			npc.setVisible(false);
+			npc.setX(10000);
+			npc.setY(10000);
+			hero.setX(670);
+			hero.setY(490);
+		} else
+		if(mapSelector == 2) {
+			mapSelector = 0;
+			loadBackground(cityMap.getCityMap());
+			cityMap.initCityMap();
+			npc.setVisible(true);
+			npc.setX(NPC_X);
+			npc.setY(NPC_Y);
+			hero.setX(560);
+			hero.setY(208);
+		} else
+		if(mapSelector == 1 && hero.getX() < 400 && hero.getY() > 450) {
+			mapSelector = 0;
+			loadBackground(cityMap.getCityMap());
+			cityMap.initCityMap();
+			npc.setVisible(true);
+			npc.setX(NPC_X);
+			npc.setY(NPC_Y);
+			hero.setX(160);
+			hero.setY(600);
+		} else
+		if(mapSelector == 1 && hero.getY() < 400) {
+			mapSelector = 3;
+			loadBackground(cityMap.getCaveMap());
+			cityMap.initCave();
+			npc.setVisible(false);
+			npc.setX(10000);
+			npc.setY(10000);
+			hero.setX(670);
+			hero.setY(490);
+			}
+	}
+	
 	public void checkCollisions() {
 
         Rectangle r3 = hero.getBounds();
@@ -244,12 +304,25 @@ public class MyPanel extends JPanel implements ActionListener {
 
         if(cityMap.tableActions(r3) == 1)
         	hero.stop();
-        
+        if(cityMap.tableActions(r3) == 2 && hero.isToEnter()) {
+        	
+        	int option = JOptionPane.showConfirmDialog(this,"Czy chcesz wejœæ do œrodka?", "", JOptionPane.YES_NO_OPTION);
+        	if(option == 0) {
+        		
+        		mapSelect();
+        		hero.setToEnter(false);
+        	} else {
+        		
+        		hero.setToEnter(false);
+        	}
+        		
+        		
+        }
+        	
         if (r3.intersects(r4)) {
             
         	hero.stop();
         	hero.addPotions();
-        	//JOptionPane.showMessageDialog(this, "Eggs are not supposed to be green.");
         }
         
         for (Monster monster : monsters) {

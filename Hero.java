@@ -15,6 +15,7 @@ public class Hero extends WalkAnimation{
 	private int potions;
 	private int health;
 	private int attack;
+	private boolean toEnter;
 
 	public Hero(int x, int y, String a0, String a1, String a2, String a3, String a4, String a5, String a6, String a7, String a8, String a9, String a10, String a11, String a12, String a13, String a14, String a15) {
 		super(x, y, a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15);
@@ -120,6 +121,14 @@ public class Hero extends WalkAnimation{
 		return potions;
 	}
 
+	public boolean isToEnter() {
+		return toEnter;
+	}
+
+	public void setToEnter(boolean toEnter) {
+		this.toEnter = toEnter;
+	}
+
 	public void keyPressed(KeyEvent e) {
 		
 		int key = e.getKeyCode();
@@ -138,6 +147,9 @@ public class Hero extends WalkAnimation{
 		}
 		if(key == KeyEvent.VK_DOWN) {
 			dy = 1;
+		}
+		if(key == KeyEvent.VK_ENTER) {
+			toEnter = true;
 		}
 	}
 	
@@ -160,6 +172,9 @@ public class Hero extends WalkAnimation{
 		}
 		if(key == KeyEvent.VK_DOWN) {
 			dy = 0;
+		}
+		if(key == KeyEvent.VK_ENTER) {
+			toEnter = false;
 		}
 	}
 		
