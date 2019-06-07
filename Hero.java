@@ -15,6 +15,8 @@ public class Hero extends WalkAnimation{
 	private int potions;
 	private int health;
 	private int attack;
+	private int armor;
+	private int exp;
 	private boolean toEnter;
 
 	public Hero(int x, int y, String a0, String a1, String a2, String a3, String a4, String a5, String a6, String a7, String a8, String a9, String a10, String a11, String a12, String a13, String a14, String a15) {
@@ -29,6 +31,7 @@ public class Hero extends WalkAnimation{
 		potions = 0;
 		health = 100;
 		attack = 40;
+		armor = 10;
 		loadImage("src/resources/paladyn/pal1-0-0.png");
 		getImageDimensions();
 	}
@@ -82,6 +85,14 @@ public class Hero extends WalkAnimation{
 		return attack;
 	}
 
+	public int getArmor() {
+		return armor;
+	}
+	
+	public void gainArmor() {
+		armor += 10;
+	}
+
 	public int getDx() {
 		return dx;
 	}
@@ -121,6 +132,14 @@ public class Hero extends WalkAnimation{
 		return potions;
 	}
 
+	public int getExp() {
+		return exp;
+	}
+	
+	public void gainExp(int exp) {
+		this.exp += exp;
+	}
+
 	public boolean isToEnter() {
 		return toEnter;
 	}
@@ -154,7 +173,14 @@ public class Hero extends WalkAnimation{
 	}
 	
 	public void fire() {
-		missiles.add(new Missile(x, y, lastDirectionX, lastDirectionY));
+		
+		if(missiles.isEmpty())
+			missiles.add(new Missile(x, y, lastDirectionX, lastDirectionY));
+		else
+			if((Math.abs(missiles.get(missiles.size() - 1).getX() - x) > 80) || (Math.abs(missiles.get(missiles.size() - 1).getY() - y) > 80))
+				missiles.add(new Missile(x, y, lastDirectionX, lastDirectionY));
+		
+				
 	}
 	
 	public void keyReleased(KeyEvent e) {

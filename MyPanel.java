@@ -12,10 +12,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -29,8 +31,8 @@ public class MyPanel extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	private final int x = 0;
 	private final int y = 0;
-	private final int HERO_X = 450;
-	private final int HERO_Y = 250;
+	private final int HERO_X = 640;
+	private final int HERO_Y = 640;
 	private final int NPC_X = 770;
 	private final int NPC_Y = 170;
 	private final int BOARD_WIDTH = 1040;
@@ -48,7 +50,7 @@ public class MyPanel extends JPanel implements ActionListener {
 
 	
 	private final int[][] pos = {
-			//{1200, 200}, {450, 600}, {800, 300}
+			{1200, 200}, {450, 600}, {800, 300}
 	};
 	
 	
@@ -63,11 +65,11 @@ public class MyPanel extends JPanel implements ActionListener {
 		setBounds(x, y, BOARD_WIDTH, BOARD_HEIGHT);
 		setFocusable(true);
 		cityMap = new CityMap();
-		//mapSelector = 0;
-		//loadBackground(cityMap.getCityMap());
-		mapSelector = 3;
-		loadBackground(cityMap.getCaveMap());
-		cityMap.initCave();
+		mapSelector = 0;
+		loadBackground(cityMap.getCityMap());
+		//mapSelector = 3;
+		//loadBackground(cityMap.getCaveMap());
+		//cityMap.initCave();
 		loadLeftPanel("src/resources/wood/wood2.jpg");
 		hero = new Hero(HERO_X, HERO_Y, "src/resources/paladyn/pal1-0-0.png",
 										"src/resources/paladyn/pal1-1-0.png",
@@ -153,6 +155,10 @@ public class MyPanel extends JPanel implements ActionListener {
 		for(Monster monster : monsters) {
 			if(monster.isVisible() ) {
 				g2d.drawImage(monster.getImage(), monster.getX(), monster.getY(), this);
+				g2d.setColor(Color.RED);
+				g2d.fillRect(monster.getX(), monster.getY() + 50, 50, 5);
+				g2d.setColor(Color.GREEN);
+				g2d.fillRect(monster.getX(), monster.getY() + 50, (int) (monster.getHealth() / 2), 5);
 			}
 		}
 		
@@ -161,9 +167,24 @@ public class MyPanel extends JPanel implements ActionListener {
 		g2d.setColor(Color.WHITE);
 		Font small = new Font("Helvetica", Font.BOLD, 18);
 		g2d.setFont(small);
-		g2d.drawString("Monsters: " + monsters.size(), 1080, 50);
-		g2d.drawString("Potions: " + hero.getPotions(), 1080, 100);
+		g2d.drawString("Health: " + hero.getHealth(), 1080, 45);
+		g2d.drawString("Experience: " + hero.getExp(), 1080, 95);
+		g2d.drawString("x " + hero.getPotions(), 1170, 180);
+		g2d.drawString("x " + hero.getAttack(), 1170, 260);
+		g2d.drawString("x " + hero.getArmor(), 1170, 340);
+		//g2d.drawString("Monsters: " + monsters.size(), 1080, 250);
 		g2d.drawString("( " + hero.getX() + ", " + hero.getY() + " )", 1180, 680);
+		g2d.setColor(Color.RED);
+		g2d.fillRect(1080, 50, 160, 10);
+		g2d.setColor(Color.GREEN);
+		g2d.fillRect(1080, 50, (int) (hero.getHealth() * 1.6), 10);
+		g2d.setColor(Color.BLACK);
+		g2d.fillRect(1080, 100, 160, 10);
+		g2d.setColor(Color.YELLOW);
+		g2d.fillRect(1080, 100, (int) (hero.getExp() / 100), 10);
+		g2d.drawImage(Toolkit.getDefaultToolkit().getImage("src/resources/potion/potion.png"), 1120, 150, this);
+		g2d.drawImage(Toolkit.getDefaultToolkit().getImage("src/resources/potion/sword.png"), 1120, 230, this);
+		g2d.drawImage(Toolkit.getDefaultToolkit().getImage("src/resources/potion/shield.png"), 1120, 310, this);
 	}
 	
 	private void drawGameOver(Graphics g) {
@@ -292,9 +313,39 @@ public class MyPanel extends JPanel implements ActionListener {
 			npc.setVisible(false);
 			npc.setX(10000);
 			npc.setY(10000);
-			hero.setX(670);
-			hero.setY(490);
-			}
+			hero.setX(844);
+			hero.setY(432);
+		} else
+		if(mapSelector == 3 && hero.getX() > 800) {
+			mapSelector = 1;
+			loadBackground(cityMap.getIndoorMap());
+			cityMap.initIndoor();
+			npc.setVisible(false);
+			npc.setX(10000);
+			npc.setY(10000);
+			hero.setX(492);
+			hero.setY(225);
+		} else
+		if(mapSelector == 3 && hero.getX() < 800) {
+			mapSelector = 4;
+			loadBackground(cityMap.getChamberMap());
+			cityMap.initChamber();
+			npc.setVisible(false);
+			npc.setX(10000);
+			npc.setY(10000);
+			hero.setX(364);
+			hero.setY(648);
+		} else
+		if(mapSelector == 4) {
+			mapSelector = 3;
+			loadBackground(cityMap.getCaveMap());
+			cityMap.initCave();
+			npc.setVisible(false);
+			npc.setX(10000);
+			npc.setY(10000);
+			hero.setX(364);
+			hero.setY(80);
+		}
 	}
 	
 	public void checkCollisions() {
@@ -352,6 +403,7 @@ public class MyPanel extends JPanel implements ActionListener {
                 	monster.getDamage(hero.getAttack());
                 	if(monster.getHealth() <= 0) {
                 		monster.setVisible(false);
+                		hero.gainExp(monster.getExp());
                 	}
                     m.setVisible(false);
                 }
