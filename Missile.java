@@ -2,22 +2,22 @@ package jtp2019;
 
 public class Missile extends Sprite {
 	
-	private final int MISSILE_SPEED = 10;
+	private final int MISSILE_SPEED = 5;
 	private int dx;
 	private int dy;
 	
 	
-	public Missile(int x, int y, int dx, int dy) {
+	public Missile(int x, int y, int dx, int dy, String image) {
 		super(x, y);
 		
-		initMissile(dx, dy);
+		initMissile(dx, dy, image);
 	}
 	
-	private void initMissile(int dx, int dy) {
+	private void initMissile(int dx, int dy, String image) {
 		
 		this.dx = dx;
 		this.dy = dy;
-		loadImage("src/resources/fireball/fireball.png");
+		loadImage(image);
 		getImageDimensions();
 	}
 

@@ -41,6 +41,7 @@ public class MyPanel extends JPanel implements ActionListener {
 	private Timer timer;
 	private Hero hero;
 	private Npc npc;
+	private Witch witch;
 	private Image background;
 	private Image leftPanel;
 	private List<Monster> monsters;
@@ -50,7 +51,7 @@ public class MyPanel extends JPanel implements ActionListener {
 
 	
 	private final int[][] pos = {
-			{1200, 200}, {450, 600}, {800, 300}
+		//	{1200, 200}, {450, 600}, {800, 300}
 	};
 	
 	
@@ -71,6 +72,7 @@ public class MyPanel extends JPanel implements ActionListener {
 		//loadBackground(cityMap.getCaveMap());
 		//cityMap.initCave();
 		loadLeftPanel("src/resources/wood/wood2.jpg");
+		
 		hero = new Hero(HERO_X, HERO_Y, "src/resources/paladyn/pal1-0-0.png",
 										"src/resources/paladyn/pal1-1-0.png",
 										"src/resources/paladyn/pal1-2-0.png",
@@ -87,6 +89,24 @@ public class MyPanel extends JPanel implements ActionListener {
 										"src/resources/paladyn/pal1-1-3.png",
 										"src/resources/paladyn/pal1-2-3.png",
 										"src/resources/paladyn/pal1-3-3.png");
+		
+		witch = new Witch(10000, 10000, 	"src/resources/witch/witch-0-0.png",
+											"src/resources/witch/witch-1-0.png",
+											"src/resources/witch/witch-2-0.png",
+											"src/resources/witch/witch-3-0.png",
+											"src/resources/witch/witch-0-1.png",
+											"src/resources/witch/witch-1-1.png",
+											"src/resources/witch/witch-2-1.png",
+											"src/resources/witch/witch-3-1.png",
+											"src/resources/witch/witch-0-2.png",
+											"src/resources/witch/witch-1-2.png",
+											"src/resources/witch/witch-2-2.png",
+											"src/resources/witch/witch-3-2.png",
+											"src/resources/witch/witch-0-3.png",
+											"src/resources/witch/witch-1-3.png",
+											"src/resources/witch/witch-2-3.png",
+											"src/resources/witch/witch-3-3.png");
+		witch.setVisible(false);
 		initMonsters();
 		npc = new Npc(NPC_X, NPC_Y);
 		inGame = true;
@@ -144,9 +164,26 @@ public class MyPanel extends JPanel implements ActionListener {
 			g2d.drawImage(npc.getImage(), npc.getX(), npc.getY(), this);
 		}
 		
+		if(witch.isVisible()) {
+			g2d.drawImage(witch.getImage(), witch.getX(), witch.getY(), this);
+			g2d.drawImage(witch.getImage(), witch.getX(), witch.getY(), this);
+			g2d.setColor(Color.RED);
+			g2d.fillRect(witch.getX(), witch.getY() + 50, 33, 5);
+			g2d.setColor(Color.CYAN);
+			g2d.fillRect(witch.getX(), witch.getY() + 50, (int) (witch.getHealth() / 120), 5);
+		}
+		
 		List<Missile> missiles = hero.getMissiles();
 		
 		for(Missile missile : missiles) {
+			if(missile.isVisible()) {
+				g2d.drawImage(missile.getImage(), missile.getX(), missile.getY(), this);
+			}
+		}
+		
+		List<Missile> witchMissiles = witch.getMissiles();
+		
+		for(Missile missile : witchMissiles) {
 			if(missile.isVisible()) {
 				g2d.drawImage(missile.getImage(), missile.getX(), missile.getY(), this);
 			}
@@ -210,6 +247,7 @@ public class MyPanel extends JPanel implements ActionListener {
 
 		inGame();
 		
+		updateWitch();
 		updateMissiles();
 		updateHero();
 		updateMonsters();
@@ -218,8 +256,13 @@ public class MyPanel extends JPanel implements ActionListener {
 		repaint();
 	}
 	
+	private void updateWitch() {
+		witch.move();
+	}
+	
 	private void updateMissiles () {
 		List<Missile> missiles = hero.getMissiles();
+		List<Missile> witchMissiles = witch.getMissiles();
 		
 		for(int i = 0; i < missiles.size(); i++) {
 			Missile missile = missiles.get(i);
@@ -230,6 +273,18 @@ public class MyPanel extends JPanel implements ActionListener {
 			} else {
 				
 				missiles.remove(i);
+			}
+		}
+		
+		for(int i = 0; i < witchMissiles.size(); i++) {
+			Missile missile = witchMissiles.get(i);
+			
+			if (missile.isVisible()) {
+				
+				missile.move(BOARD_WIDTH, BOARD_HEIGHT);
+			} else {
+				
+				witchMissiles.remove(i);
 			}
 		}
 	}
@@ -335,6 +390,10 @@ public class MyPanel extends JPanel implements ActionListener {
 			npc.setY(10000);
 			hero.setX(364);
 			hero.setY(648);
+			witch.setVisible(true);
+			witch.setX(523);
+			witch.setY(135);
+			
 		} else
 		if(mapSelector == 4) {
 			mapSelector = 3;
@@ -345,6 +404,9 @@ public class MyPanel extends JPanel implements ActionListener {
 			npc.setY(10000);
 			hero.setX(364);
 			hero.setY(80);
+			witch.setVisible(false);
+			witch.setX(10000);
+			witch.setY(10000);
 		}
 	}
 	
@@ -352,6 +414,7 @@ public class MyPanel extends JPanel implements ActionListener {
 
         Rectangle r3 = hero.getBounds();
         Rectangle r4 = npc.getBounds();
+        Rectangle r5 = witch.getBounds();
 
         if(cityMap.tableActions(r3) == 1)
         	hero.stop();
@@ -410,6 +473,35 @@ public class MyPanel extends JPanel implements ActionListener {
             //kolizja z npc
             if (r1.intersects(r4)) {
 
+                m.setVisible(false); 
+            }
+            //kolizja z wiezdzma
+            if (r1.intersects(r5)) {
+            	
+            	witch.getDamage(hero.getAttack());
+            	if(!witch.isVisible()) {
+            		hero.gainExp(witch.getExp());
+            		witch.setX(10000);
+            		witch.setY(10000);
+            	}
+            	m.setVisible(false);
+            }
+            if(cityMap.tableActions(r1) == 1)
+            	 
+            	m.setVisible(false); 
+        }  
+        
+        //kolizja pocisku wiedzmy z bohaterem
+        List<Missile> mw = witch.getMissiles();
+
+        for (Missile m : mw) {
+
+            Rectangle r1 = m.getBounds();
+
+            //kolizja z npc
+            if (r1.intersects(r3)) {
+
+            	hero.getDamage(witch.getAttack());
                 m.setVisible(false); 
             }
             if(cityMap.tableActions(r1) == 1)

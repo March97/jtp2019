@@ -196,10 +196,10 @@ public class Hero extends WalkAnimation{
 	public void fire() {
 		
 		if(missiles.isEmpty())
-			missiles.add(new Missile(x, y, lastDirectionX, lastDirectionY));
+			missiles.add(new Missile(x, y, lastDirectionX, lastDirectionY, "src/resources/fireball/fireball.png"));
 		else
 			if((Math.abs(missiles.get(missiles.size() - 1).getX() - x) > 80) || (Math.abs(missiles.get(missiles.size() - 1).getY() - y) > 80))
-				missiles.add(new Missile(x, y, lastDirectionX, lastDirectionY));			
+				missiles.add(new Missile(x, y, lastDirectionX, lastDirectionY, "src/resources/fireball/fireball.png"));			
 	}
 	
 	public void keyReleased(KeyEvent e) {
