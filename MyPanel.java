@@ -365,16 +365,15 @@ public class MyPanel extends JPanel implements ActionListener {
         	} else {
         		
         		hero.setToEnter(false);
-        	}
-        		
-        		
+        	}			
         }
         	
         if (r3.intersects(r4)) {
             
         	hero.stop();
         	hero.addPotions();
-        }
+        } else 
+        	hero.setWantPotions(false);
         
         for (Monster monster : monsters) {
             
@@ -413,6 +412,9 @@ public class MyPanel extends JPanel implements ActionListener {
 
                 m.setVisible(false); 
             }
+            if(cityMap.tableActions(r1) == 1)
+            	 
+            	m.setVisible(false); 
         }  
     }
 	
