@@ -19,6 +19,8 @@ public class Hero extends WalkAnimation{
 	private int exp;
 	private boolean toEnter;
 	private boolean wantPotions;
+	private boolean wantAttack;
+	private boolean wantDef;
 
 	public Hero(int x, int y, String a0, String a1, String a2, String a3, String a4, String a5, String a6, String a7, String a8, String a9, String a10, String a11, String a12, String a13, String a14, String a15) {
 		super(x, y, a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15);
@@ -33,6 +35,10 @@ public class Hero extends WalkAnimation{
 		health = 100;
 		attack = 40;
 		armor = 10;
+		exp = 5000;
+		wantPotions = false;
+		wantAttack = false;
+		wantDef = false;
 		loadImage("src/resources/paladyn/pal1-0-0.png");
 		getImageDimensions();
 	}
@@ -111,7 +117,11 @@ public class Hero extends WalkAnimation{
 	}
 	
 	public void getDamage(int damage) {
-		health -= damage;
+		
+		if(damage - armor > 10)
+			health -= damage - armor;
+		else
+			health -= 10;
 	}
 
 	public List<Missile> getMissiles() {
@@ -121,7 +131,7 @@ public class Hero extends WalkAnimation{
 	public void addPotions() {
 		
 		if(wantPotions) {
-			if(exp < -1000)
+			if(exp < 1000)
 				return;
 			else {
 				exp -= 1000;
@@ -130,6 +140,33 @@ public class Hero extends WalkAnimation{
 			}
 		}
 	}
+	
+	public void addAttack() {
+		
+		if(wantAttack) {
+			if(exp < 1500)
+				return;
+			else {
+				exp -= 1500;
+				attack += 10;
+				wantAttack = false;
+			}
+		}
+	}
+
+	public void addDef() {
+	
+	if(wantDef) {
+		if(exp < 2000)
+			return;
+		else {
+			exp -= 2000;
+			armor += 10;
+			wantDef = false;
+		}
+	}
+	}
+	
 	
 	public void usePotions() {
 		if(potions > 0) {
@@ -166,6 +203,22 @@ public class Hero extends WalkAnimation{
 
 	public void setWantPotions(boolean wantPotions) {
 		this.wantPotions = wantPotions;
+	}
+
+	public boolean isWantAttack() {
+		return wantAttack;
+	}
+
+	public void setWantAttack(boolean wantAttack) {
+		this.wantAttack = wantAttack;
+	}
+
+	public boolean isWantDef() {
+		return wantDef;
+	}
+
+	public void setWantDef(boolean wantDef) {
+		this.wantDef = wantDef;
 	}
 
 	public void keyPressed(KeyEvent e) {
@@ -228,6 +281,12 @@ public class Hero extends WalkAnimation{
 		if(key == KeyEvent.VK_Z) {
 			usePotions();
 			System.out.println("use potions ");
+		}
+		if(key == KeyEvent.VK_A) {
+			wantAttack = true;
+		}
+		if(key == KeyEvent.VK_D) {
+			wantDef = true;
 		}
 	}
 		

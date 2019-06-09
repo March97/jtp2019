@@ -195,10 +195,6 @@ public class MyPanel extends JPanel implements ActionListener {
 			g2d.drawImage(hero.getImage(), hero.getX(), hero.getY(), this);
 		}
 		
-		if(monk.isVisible()) { 
-			g2d.drawImage(monk.getImage(), monk.getX(), monk.getY(), this);
-		}
-		
 		if(witch.isVisible()) {
 			g2d.drawImage(witch.getImage(), witch.getX(), witch.getY(), this);
 			g2d.drawImage(witch.getImage(), witch.getX(), witch.getY(), this);
@@ -233,9 +229,57 @@ public class MyPanel extends JPanel implements ActionListener {
 				g2d.fillRect(monster.getX(), monster.getY() + 50, (int) (monster.getHealth() / 2), 5);
 			}
 		}
+		
+		//Rectangle r1 = hero.getBounds();
 		for(Npc npc : npcs) {
 			if(npc.isVisible() ) {
 				g2d.drawImage(npc.getImage(), npc.getX(), npc.getY(), this);
+				//Rectangle r2 = npc.getBounds();
+				
+				if(npc.isInterrupt()) {
+					
+					g2d.setColor(new Color(115, 75, 20));
+					g2d.fillRoundRect(npc.getX() - 47, npc.getY() - 47, 154, 44, 10, 10);
+					g2d.setColor(new Color(255, 250, 185));
+					g2d.fillRoundRect(npc.getX() - 45, npc.getY() - 45, 150, 40, 10, 10);
+					g2d.setColor(new Color(115, 75, 20));
+					//g2d.fillRoundRect(npc.getX() - 47, npc.getY() - 47, 154, 44, 5, 5);
+					Font small = new Font("Helvetica", Font.BOLD, 12);
+					g2d.setFont(small);
+					g2d.drawString(npc.getDialog1(), npc.getX() - 40, npc.getY() - 32);
+					g2d.drawString(npc.getDialog2(), npc.getX() - 40, npc.getY() - 22);
+					g2d.drawString(npc.getDialog3(), npc.getX() - 40, npc.getY() - 12);
+				}
+			}
+		}
+		
+		if(monk.isVisible()) { 
+			g2d.setColor(Color.YELLOW);
+			//g2d.fillRoundRect(npc.getX() - 47, npc.getY() - 47, 154, 44, 5, 5);
+			Font big = new Font("Helvetica", Font.BOLD, 32);
+			g2d.setFont(big);
+			g2d.drawString("!", monk.getX() + 11, monk.getY() - 5);
+			
+			g2d.drawImage(monk.getImage(), monk.getX(), monk.getY(), this);
+			if(monk.isInterrupt()) {
+				
+				g2d.setColor(new Color(115, 75, 20));
+				g2d.fillRoundRect(monk.getX() - 107, monk.getY() - 95, 324, 92, 10, 10);
+				g2d.setColor(new Color(255, 250, 185));
+				g2d.fillRoundRect(monk.getX() - 105, monk.getY() - 93, 320, 88, 10, 10);
+				g2d.setColor(new Color(115, 75, 20));
+				//g2d.fillRoundRect(npc.getX() - 47, npc.getY() - 47, 154, 44, 5, 5);
+				Font small = new Font("Helvetica", Font.BOLD, 12);
+				g2d.setFont(small);
+				g2d.drawString("Witaj Wêdrowcze!", monk.getX() - 100, monk.getY() - 82);
+				g2d.drawString("W podziemiach domu przy po³udniowym murze", monk.getX() - 100, monk.getY() - 72);
+				g2d.drawString("zalêg³y siê potowry, które atakuj¹ nasze miaso w nocy.", monk.getX() - 100, monk.getY() - 62);
+				g2d.drawString("Pozb¹d¿ siê ich, a ludzie bêd¹ Ci wdziêczni.", monk.getX() - 100, monk.getY() - 52);
+				g2d.setColor(Color.RED);
+				g2d.drawString("U mnie mo¿esz ulepszyæ swój sprzêt i kupiæ mikstury.", monk.getX() - 100, monk.getY() - 42);
+				g2d.drawString("[E] - kup mikstury, koszt 1000 doœw.", monk.getX() - 100, monk.getY() - 32);
+				g2d.drawString("[A] - wzmocnij atak, koszt 1500 doœw.", monk.getX() - 100, monk.getY() - 22);
+				g2d.drawString("[D] - wzmocnij obronê, koszt 2000 doœw.", monk.getX() - 100, monk.getY() - 12);
 			}
 		}
 		
@@ -266,13 +310,14 @@ public class MyPanel extends JPanel implements ActionListener {
 	
 	private void drawGameOver(Graphics g) {
 		
-		String msg = "Game Over";
+		g.drawImage(Toolkit.getDefaultToolkit().getImage("src/resources/gameover.jpg"), 0, 0, this);
+		String msg = "Naciœnij dowolny klawisz, aby rozpocz¹æ od nowa.";
 		Font small = new Font("Helvetica", Font.BOLD, 28);
 		FontMetrics fm = getFontMetrics(small);
 		
-		g.setColor(Color.black);
+		g.setColor(Color.WHITE);
 		g.setFont(small);
-		g.drawString(msg, (BOARD_WIDTH - fm.stringWidth(msg)) / 2, BOARD_HEIGHT / 2);
+		g.drawString(msg, (1280 - fm.stringWidth(msg)) / 2, BOARD_HEIGHT / 3 * 2);
 	}
 	
 	private void inGame() {
@@ -490,8 +535,16 @@ public class MyPanel extends JPanel implements ActionListener {
             
         	hero.stop();
         	hero.addPotions();
-        } else 
+        	hero.addAttack();
+        	hero.addDef();
+        	monk.setInterrupt(true);
+        } else  {
         	hero.setWantPotions(false);
+        	hero.setWantAttack(false);
+        	hero.setWantDef(false);
+        	monk.setInterrupt(false);
+        }
+        	
         
         for (Monster monster : monsters) {
             
@@ -510,7 +563,9 @@ public class MyPanel extends JPanel implements ActionListener {
 
             if (r3.intersects(r2)) {
                 hero.stop();
-            }
+                npc.setInterrupt(true);
+            } else 
+            	npc.setInterrupt(false);
         }
 
         List<Missile> ms = hero.getMissiles();

@@ -30,10 +30,10 @@ public class Missile extends Sprite {
 			y += MISSILE_SPEED;
 		}
 		if(dx < 0) {
-			x -=MISSILE_SPEED;
+			x -= MISSILE_SPEED;
 		}
 		if(dy < 0) {
-			y -=MISSILE_SPEED;
+			y -= MISSILE_SPEED;
 		}
 		if(dy == 0 && dx == 0) {
 			visible = false;
