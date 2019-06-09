@@ -2,15 +2,15 @@ package jtp2019;
 
 public class Npc extends Sprite{
 	
-	public Npc(int x, int y) {
+	public Npc(int x, int y, String string) {
 		super(x, y);
 		
-		initNpc();
+		initNpc(string);
 	}
 	
-	public void initNpc() {
+	public void initNpc(String string) {
 		
-		loadImage("src/resources/npc_szary/npc1-0-0.png");
+		loadImage(string);
 		getImageDimensions();
 	}
 }

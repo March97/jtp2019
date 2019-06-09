@@ -40,20 +40,27 @@ public class MyPanel extends JPanel implements ActionListener {
 	private CityMap cityMap;
 	private Timer timer;
 	private Hero hero;
-	private Npc npc;
+	private Npc monk;
 	private Witch witch;
 	private Image background;
 	private Image leftPanel;
+	private List<Npc> npcs;
 	private List<Monster> monsters;
 	private boolean inGame;
 	private final int DELAY = 15; //opoznienie animacji
 	private int mapSelector;
-
-	
-	private final int[][] pos = {
-		//	{1200, 200}, {450, 600}, {800, 300}
+	private final int[][] monsterPos = {
+		{414, 586}, {550, 548}, {598, 442},
+		{844, 608}, {744, 336}, {624, 310},
+		{480, 124}, {332, 214}, {350, 350}
 	};
-	
+	private final int[][] npcPos = {
+			{598, 208}, {288, 152}, {384, 152},
+			{544, 640}, {750, 640}, {750, 380},
+			{880, 106}, {356, 315}, {566, 466},
+			{566, 552}, {598, 506}, {846, 384},
+			{804, 160}, {88, 135},  {314, 315},	
+	};
 	
 	public MyPanel() {
 		
@@ -107,18 +114,41 @@ public class MyPanel extends JPanel implements ActionListener {
 											"src/resources/witch/witch-2-3.png",
 											"src/resources/witch/witch-3-3.png");
 		witch.setVisible(false);
-		initMonsters();
-		npc = new Npc(NPC_X, NPC_Y);
+		monsters = new ArrayList<>();
+		//initMonsters();
+		initNpcs();
+		monk = new Npc(NPC_X, NPC_Y, "src/resources/npc_szary/npc1-0-0.png") ;
 		inGame = true;
 		timer = new Timer(DELAY, this);
 		timer.restart();
 	}
 	
+	public void initNpcs() {
+		
+		npcs = new ArrayList<>();
+		
+		for(int i = 0; i < 7; i++) {
+			npcs.add(new Npc(npcPos[i][0], npcPos[i][1], "src/resources/npc/kuf_herbrycerz-0-0.png"));
+		}
+		
+		npcs.add(new Npc(npcPos[7][0], npcPos[7][1], "src/resources/npc/hk-0-1.png"));
+		npcs.add(new Npc(npcPos[8][0], npcPos[8][1], "src/resources/npc/bm-0-0.png"));
+		npcs.add(new Npc(npcPos[9][0], npcPos[9][1], "src/resources/npc/mm-0-3.png"));
+		npcs.add(new Npc(npcPos[10][0], npcPos[10][1], "src/resources/npc/asceta_m-0-1.png"));
+		npcs.add(new Npc(npcPos[11][0], npcPos[11][1], "src/resources/npc/mm-0-1.png"));
+		npcs.add(new Npc(npcPos[12][0], npcPos[12][1], "src/resources/npc/hk-0-3.png"));
+		npcs.add(new Npc(npcPos[13][0], npcPos[13][1], "src/resources/npc/asceta_m-0-0.png"));
+		npcs.add(new Npc(npcPos[14][0], npcPos[14][1], "src/resources/npc/asceta_m-0-2.png"));
+	}
+	
+	public void removeNpcs() {
+		
+		npcs.clear();
+	}
+	
 	public void initMonsters() {
 		
-		monsters = new ArrayList<>();
-		
-		for(int[] p : pos) {
+		for(int[] p : monsterPos) {
 			monsters.add(new Monster(p[0], p[1], 	"src/resources/monster/monster-0-0.png",
 													"src/resources/monster/monster-1-0.png",
 													"src/resources/monster/monster-2-0.png",
@@ -136,6 +166,11 @@ public class MyPanel extends JPanel implements ActionListener {
 													"src/resources/monster/monster-2-3.png",
 													"src/resources/monster/monster-3-3.png"));
 		}
+	}
+	
+	public void removeMonsters() {
+		
+		monsters.clear();
 	}
 	
 	@Override
@@ -160,8 +195,8 @@ public class MyPanel extends JPanel implements ActionListener {
 			g2d.drawImage(hero.getImage(), hero.getX(), hero.getY(), this);
 		}
 		
-		if(npc.isVisible()) { 
-			g2d.drawImage(npc.getImage(), npc.getX(), npc.getY(), this);
+		if(monk.isVisible()) { 
+			g2d.drawImage(monk.getImage(), monk.getX(), monk.getY(), this);
 		}
 		
 		if(witch.isVisible()) {
@@ -196,6 +231,11 @@ public class MyPanel extends JPanel implements ActionListener {
 				g2d.fillRect(monster.getX(), monster.getY() + 50, 50, 5);
 				g2d.setColor(Color.GREEN);
 				g2d.fillRect(monster.getX(), monster.getY() + 50, (int) (monster.getHealth() / 2), 5);
+			}
+		}
+		for(Npc npc : npcs) {
+			if(npc.isVisible() ) {
+				g2d.drawImage(npc.getImage(), npc.getX(), npc.getY(), this);
 			}
 		}
 		
@@ -322,98 +362,113 @@ public class MyPanel extends JPanel implements ActionListener {
 	public void mapSelect() {
 		
 		if(mapSelector == 0 && hero.getY() > 550) {
+			
 			mapSelector = 1;
 			loadBackground(cityMap.getIndoorMap());
 			cityMap.initIndoor();
-			npc.setVisible(false);
-			npc.setX(10000);
-			npc.setY(10000);
+			monk.setVisible(false);
+			monk.setX(10000);
+			monk.setY(10000);
 			hero.setX(364);
 			hero.setY(533);
+			removeNpcs();
 		} else
 		if(mapSelector == 0) {
+			
 			mapSelector = 2;
 			loadBackground(cityMap.getTavernMap());
 			cityMap.initTavern();
-			npc.setVisible(false);
-			npc.setX(10000);
-			npc.setY(10000);
+			monk.setVisible(false);
+			monk.setX(10000);
+			monk.setY(10000);
 			hero.setX(670);
 			hero.setY(490);
+			removeNpcs();
 		} else
 		if(mapSelector == 2) {
+			
 			mapSelector = 0;
 			loadBackground(cityMap.getCityMap());
 			cityMap.initCityMap();
-			npc.setVisible(true);
-			npc.setX(NPC_X);
-			npc.setY(NPC_Y);
+			monk.setVisible(true);
+			monk.setX(NPC_X);
+			monk.setY(NPC_Y);
 			hero.setX(560);
 			hero.setY(208);
+			initNpcs();
 		} else
 		if(mapSelector == 1 && hero.getX() < 400 && hero.getY() > 450) {
+			
 			mapSelector = 0;
 			loadBackground(cityMap.getCityMap());
 			cityMap.initCityMap();
-			npc.setVisible(true);
-			npc.setX(NPC_X);
-			npc.setY(NPC_Y);
+			monk.setVisible(true);
+			monk.setX(NPC_X);
+			monk.setY(NPC_Y);
 			hero.setX(160);
 			hero.setY(600);
+			initNpcs();
 		} else
 		if(mapSelector == 1 && hero.getY() < 400) {
+			
 			mapSelector = 3;
 			loadBackground(cityMap.getCaveMap());
 			cityMap.initCave();
-			npc.setVisible(false);
-			npc.setX(10000);
-			npc.setY(10000);
+			monk.setVisible(false);
+			monk.setX(10000);
+			monk.setY(10000);
 			hero.setX(844);
 			hero.setY(432);
+			initMonsters();
 		} else
 		if(mapSelector == 3 && hero.getX() > 800) {
+			
 			mapSelector = 1;
 			loadBackground(cityMap.getIndoorMap());
 			cityMap.initIndoor();
-			npc.setVisible(false);
-			npc.setX(10000);
-			npc.setY(10000);
+			monk.setVisible(false);
+			monk.setX(10000);
+			monk.setY(10000);
 			hero.setX(492);
 			hero.setY(225);
+			removeMonsters();
 		} else
 		if(mapSelector == 3 && hero.getX() < 800) {
+			
 			mapSelector = 4;
 			loadBackground(cityMap.getChamberMap());
 			cityMap.initChamber();
-			npc.setVisible(false);
-			npc.setX(10000);
-			npc.setY(10000);
+			monk.setVisible(false);
+			monk.setX(10000);
+			monk.setY(10000);
 			hero.setX(364);
 			hero.setY(648);
 			witch.setVisible(true);
 			witch.setX(523);
 			witch.setY(135);
-			
+			removeMonsters();
 		} else
 		if(mapSelector == 4) {
+			
 			mapSelector = 3;
 			loadBackground(cityMap.getCaveMap());
 			cityMap.initCave();
-			npc.setVisible(false);
-			npc.setX(10000);
-			npc.setY(10000);
+			monk.setVisible(false);
+			monk.setX(10000);
+			monk.setY(10000);
 			hero.setX(364);
 			hero.setY(80);
 			witch.setVisible(false);
 			witch.setX(10000);
 			witch.setY(10000);
+			initMonsters();
 		}
 	}
 	
 	public void checkCollisions() {
 
         Rectangle r3 = hero.getBounds();
-        Rectangle r4 = npc.getBounds();
+        Rectangle r4 = monk.getBounds();
         Rectangle r5 = witch.getBounds();
 
         if(cityMap.tableActions(r3) == 1)
@@ -446,6 +501,15 @@ public class MyPanel extends JPanel implements ActionListener {
                 
             	hero.getDamage(monster.getAttack());
                 monster.setVisible(false);
+            }
+        }
+        
+        for (Npc npc : npcs) {
+            
+            Rectangle r2 = npc.getBounds();
+
+            if (r3.intersects(r2)) {
+                hero.stop();
             }
         }
 

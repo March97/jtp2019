@@ -8,6 +8,7 @@ public class Witch extends WalkAnimation {
 	private int health;
 	private final int attack = 30;
 	private final int exp = 4000;
+	private final int speed = 1;
 	private int dx;
 	private int lastFire;
 	private List<Missile> missiles;
@@ -35,8 +36,8 @@ public class Witch extends WalkAnimation {
 			dx = 1;
 		if(x > 725)
 			dx = -1;
-		
-		x += dx;
+
+		x += dx * speed;
 		animation(0, 1);
 		updateToFire();
 		if(toFire)
@@ -57,6 +58,8 @@ public class Witch extends WalkAnimation {
 		missiles.add(new Missile(x, y, 0, 1, "src/resources/fireball/blueball.png"));
 		missiles.add(new Missile(x, y, 1, 0, "src/resources/fireball/blueball.png"));
 		missiles.add(new Missile(x, y, -1, 0, "src/resources/fireball/blueball.png"));
+		missiles.add(new Missile(x, y, 1, 1, "src/resources/fireball/blueball.png"));
+		missiles.add(new Missile(x, y, -1, 1, "src/resources/fireball/blueball.png"));
 	}
 	
 	public List<Missile> getMissiles() {
