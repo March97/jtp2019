@@ -1,8 +1,6 @@
 package jtp2019;
 
 import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -35,6 +33,7 @@ public class MyPanel extends JPanel implements ActionListener {
 	private final int NPC_Y = 170;
 	private LeftPanel leftPanel;
 	private Menu menu;
+	private GameOver gameOver;
 	private List<Npc> npcs;
 	private List<Monster> monsters;
 	private boolean inGame;
@@ -56,7 +55,6 @@ public class MyPanel extends JPanel implements ActionListener {
 	};
 	private Maps maps;
 	private Image background;
-	//private Image leftPanel;
 	private Timer timer;
 	private final int DELAY = 15; //opoznienie animacji
 	
@@ -71,8 +69,17 @@ public class MyPanel extends JPanel implements ActionListener {
 		addKeyListener(new TAdapter());
 		setBounds(x, y, BOARD_WIDTH, BOARD_HEIGHT);
 		setFocusable(true);
+		initGame();
+		timer = new Timer(DELAY, this);
+		timer.restart();
+	}
+	
+	private void initGame() {
+		inGame = true;
 		menu = new Menu();
 		maps = new Maps();
+		leftPanel = new LeftPanel();
+		gameOver = new GameOver();
 		mapSelector = 0;
 		loadBackground(maps.getCityMap());
 		
@@ -111,15 +118,11 @@ public class MyPanel extends JPanel implements ActionListener {
 											"src/resources/witch/witch-3-3.png");
 		witch.setVisible(false);
 		monsters = new ArrayList<>();
-		leftPanel = new LeftPanel();
-		initNpcs();
 		monk = new Monk(NPC_X, NPC_Y, "src/resources/npc_szary/npc1-0-0.png") ;
-		inGame = true;
-		timer = new Timer(DELAY, this);
-		timer.restart();
+		initNpcs();
 	}
 	
-	public void initNpcs() {
+	private void initNpcs() {
 		
 		npcs = new ArrayList<>();
 		
@@ -137,12 +140,12 @@ public class MyPanel extends JPanel implements ActionListener {
 		npcs.add(new Npc(npcPos[14][0], npcPos[14][1], "src/resources/npc/asceta_m-0-2.png"));
 	}
 	
-	public void removeNpcs() {
+	private void removeNpcs() {
 		
 		npcs.clear();
 	}
 	
-	public void initMonsters() {
+	private void initMonsters() {
 		
 		for(int[] p : monsterPos) {
 			monsters.add(new Monster(p[0], p[1], 	"src/resources/monster/monster-0-0.png",
@@ -164,7 +167,7 @@ public class MyPanel extends JPanel implements ActionListener {
 		}
 	}
 	
-	public void removeMonsters() {
+	private void removeMonsters() {
 		
 		monsters.clear();
 	}
@@ -176,7 +179,7 @@ public class MyPanel extends JPanel implements ActionListener {
 		if(inGame) {
 			doDrawing(g);
 		}else {
-			drawGameOver(g);
+			gameOver.draw(g);
 		}
 		
 		Toolkit.getDefaultToolkit().sync();
@@ -214,30 +217,19 @@ public class MyPanel extends JPanel implements ActionListener {
 			leftPanel.draw(g2d,hero.getHealth(), hero.getExp(), hero.getPotions(), hero.getAttack(), hero.getArmor(), hero.getX(), hero.getY());
 		}
 	}
-	
-	private void drawGameOver(Graphics g) {
-		
-		g.drawImage(Toolkit.getDefaultToolkit().getImage("src/resources/gameover.jpg"), 0, 0, this);
-		String msg = "Naciœnij dowolny klawisz, aby rozpocz¹æ od nowa.";
-		Font small = new Font("Helvetica", Font.BOLD, 28);
-		FontMetrics fm = getFontMetrics(small);
-		
-		g.setColor(Color.WHITE);
-		g.setFont(small);
-		g.drawString(msg, (1280 - fm.stringWidth(msg)) / 2, BOARD_HEIGHT / 3 * 2);
-	}
-	
+/*
 	private void inGame() {
 		
 		if(!inGame) {
 			timer.stop();
 		}
-	}
+	}*/
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 
-		inGame();
+		//inGame();
+		reloadGame();
 		
 		updateWitch();
 		updateMissiles();
@@ -547,11 +539,14 @@ public class MyPanel extends JPanel implements ActionListener {
 		background = ii.getImage();	
 	}
 	
-	/*protected void loadLeftPanel(String imageName) {
+	private void reloadGame() {
 		
-		ImageIcon ii = new ImageIcon(imageName);
-		leftPanel = ii.getImage();	
-	}*/
+		if(gameOver.isEnter()) {
+			timer.restart();
+			gameOver.setEnter(false);
+			initGame();
+		}
+	}
 
 	public class TAdapter extends KeyAdapter{
 
@@ -559,9 +554,10 @@ public class MyPanel extends JPanel implements ActionListener {
 		public void keyPressed(KeyEvent e) {
 			
 			hero.keyPressed(e);
-			
 			if(menu.isInMenu())
 				menu.keyPressed(e);
+			if(!inGame)
+				gameOver.keyPressed(e);
 		}
 
 		@Override

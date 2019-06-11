@@ -2,13 +2,9 @@ package jtp2019;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
-
-import javax.swing.JPanel;
 
 public class Menu {
 	
@@ -90,7 +86,6 @@ public class Menu {
 	}
 
 	public void keyPressed(KeyEvent e) {
-		
 		
 		int k = e.getKeyCode();
 		if(k == KeyEvent.VK_ENTER) {
