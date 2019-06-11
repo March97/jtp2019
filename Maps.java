@@ -1,6 +1,6 @@
 package jtp2019;
 
-public class CityMap extends Map{
+public class Maps extends Map{
 	
 	private final String cityMap = "src/resources/city/ithan1.png";
 	private final String indoorMap = "src/resources/city/pomieszczenie.png";
@@ -8,7 +8,7 @@ public class CityMap extends Map{
 	private final String caveMap = "src/resources/city/jaskinia.png";
 	private final String chamberMap = "src/resources/city/lochy.png";
 	
-	public CityMap() {
+	public Maps() {
 		super();
 		
 		initCityMap();

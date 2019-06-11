@@ -12,12 +12,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -31,23 +27,20 @@ public class MyPanel extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	private final int x = 0;
 	private final int y = 0;
+	private final int BOARD_WIDTH = 1040;
+	private final int BOARD_HEIGHT = 720;
 	private final int HERO_X = 640;
 	private final int HERO_Y = 640;
 	private final int NPC_X = 770;
 	private final int NPC_Y = 170;
-	private final int BOARD_WIDTH = 1040;
-	private final int BOARD_HEIGHT = 720;
-	private CityMap cityMap;
-	private Timer timer;
-	private Hero hero;
-	private Npc monk;
-	private Witch witch;
-	private Image background;
-	private Image leftPanel;
+	//private boolean inMenu;
+	private Menu menu;
 	private List<Npc> npcs;
 	private List<Monster> monsters;
 	private boolean inGame;
-	private final int DELAY = 15; //opoznienie animacji
+	private Hero hero;
+	private Npc monk;
+	private Witch witch;
 	private int mapSelector;
 	private final int[][] monsterPos = {
 		{414, 586}, {550, 548}, {598, 442},
@@ -61,6 +54,12 @@ public class MyPanel extends JPanel implements ActionListener {
 			{566, 552}, {598, 506}, {846, 384},
 			{804, 160}, {88, 135},  {314, 315},	
 	};
+	private Maps maps;
+	private Image background;
+	private Image leftPanel;
+	private Timer timer;
+	private final int DELAY = 15; //opoznienie animacji
+	
 	
 	public MyPanel() {
 		
@@ -72,9 +71,10 @@ public class MyPanel extends JPanel implements ActionListener {
 		addKeyListener(new TAdapter());
 		setBounds(x, y, BOARD_WIDTH, BOARD_HEIGHT);
 		setFocusable(true);
-		cityMap = new CityMap();
+		menu = new Menu();
+		maps = new Maps();
 		mapSelector = 0;
-		loadBackground(cityMap.getCityMap());
+		loadBackground(maps.getCityMap());
 		//mapSelector = 3;
 		//loadBackground(cityMap.getCaveMap());
 		//cityMap.initCave();
@@ -119,6 +119,7 @@ public class MyPanel extends JPanel implements ActionListener {
 		initNpcs();
 		monk = new Npc(NPC_X, NPC_Y, "src/resources/npc_szary/npc1-0-0.png") ;
 		inGame = true;
+		//inMenu = true;
 		timer = new Timer(DELAY, this);
 		timer.restart();
 	}
@@ -189,123 +190,131 @@ public class MyPanel extends JPanel implements ActionListener {
 	private void doDrawing(Graphics g) {
 	
 		Graphics2D g2d = (Graphics2D) g;
-		g2d.drawImage(background, 0, 0, this);
 		
-		if(hero.isVisible()) {
-			g2d.drawImage(hero.getImage(), hero.getX(), hero.getY(), this);
+		if(menu.isInMenu()) {
+			setBackground(Color.BLACK);
+			menu.draw(g2d);
 		}
+		else {
 		
-		if(witch.isVisible()) {
-			g2d.drawImage(witch.getImage(), witch.getX(), witch.getY(), this);
-			g2d.drawImage(witch.getImage(), witch.getX(), witch.getY(), this);
-			g2d.setColor(Color.RED);
-			g2d.fillRect(witch.getX(), witch.getY() + 50, 33, 5);
-			g2d.setColor(Color.CYAN);
-			g2d.fillRect(witch.getX(), witch.getY() + 50, (int) (witch.getHealth() / 120), 5);
-		}
-		
-		List<Missile> missiles = hero.getMissiles();
-		
-		for(Missile missile : missiles) {
-			if(missile.isVisible()) {
-				g2d.drawImage(missile.getImage(), missile.getX(), missile.getY(), this);
+			g2d.drawImage(background, 0, 0, this);
+			
+			if(hero.isVisible()) {
+				g2d.drawImage(hero.getImage(), hero.getX(), hero.getY(), this);
 			}
-		}
-		
-		List<Missile> witchMissiles = witch.getMissiles();
-		
-		for(Missile missile : witchMissiles) {
-			if(missile.isVisible()) {
-				g2d.drawImage(missile.getImage(), missile.getX(), missile.getY(), this);
-			}
-		}
-		
-		for(Monster monster : monsters) {
-			if(monster.isVisible() ) {
-				g2d.drawImage(monster.getImage(), monster.getX(), monster.getY(), this);
+			
+			if(witch.isVisible()) {
+				g2d.drawImage(witch.getImage(), witch.getX(), witch.getY(), this);
+				g2d.drawImage(witch.getImage(), witch.getX(), witch.getY(), this);
 				g2d.setColor(Color.RED);
-				g2d.fillRect(monster.getX(), monster.getY() + 50, 50, 5);
-				g2d.setColor(Color.GREEN);
-				g2d.fillRect(monster.getX(), monster.getY() + 50, (int) (monster.getHealth() / 2), 5);
+				g2d.fillRect(witch.getX(), witch.getY() + 50, 33, 5);
+				g2d.setColor(Color.CYAN);
+				g2d.fillRect(witch.getX(), witch.getY() + 50, (int) (witch.getHealth() / 120), 5);
 			}
-		}
-		
-		//Rectangle r1 = hero.getBounds();
-		for(Npc npc : npcs) {
-			if(npc.isVisible() ) {
-				g2d.drawImage(npc.getImage(), npc.getX(), npc.getY(), this);
-				//Rectangle r2 = npc.getBounds();
+			
+			List<Missile> missiles = hero.getMissiles();
+			
+			for(Missile missile : missiles) {
+				if(missile.isVisible()) {
+					g2d.drawImage(missile.getImage(), missile.getX(), missile.getY(), this);
+				}
+			}
+			
+			List<Missile> witchMissiles = witch.getMissiles();
+			
+			for(Missile missile : witchMissiles) {
+				if(missile.isVisible()) {
+					g2d.drawImage(missile.getImage(), missile.getX(), missile.getY(), this);
+				}
+			}
+			
+			for(Monster monster : monsters) {
+				if(monster.isVisible() ) {
+					g2d.drawImage(monster.getImage(), monster.getX(), monster.getY(), this);
+					g2d.setColor(Color.RED);
+					g2d.fillRect(monster.getX(), monster.getY() + 50, 50, 5);
+					g2d.setColor(Color.GREEN);
+					g2d.fillRect(monster.getX(), monster.getY() + 50, (int) (monster.getHealth() / 2), 5);
+				}
+			}
+			
+			//Rectangle r1 = hero.getBounds();
+			for(Npc npc : npcs) {
+				if(npc.isVisible() ) {
+					g2d.drawImage(npc.getImage(), npc.getX(), npc.getY(), this);
+					//Rectangle r2 = npc.getBounds();
+					
+					if(npc.isInterrupt()) {
+						
+						g2d.setColor(new Color(115, 75, 20));
+						g2d.fillRoundRect(npc.getX() - 47, npc.getY() - 47, 154, 44, 10, 10);
+						g2d.setColor(new Color(255, 250, 185));
+						g2d.fillRoundRect(npc.getX() - 45, npc.getY() - 45, 150, 40, 10, 10);
+						g2d.setColor(new Color(115, 75, 20));
+						//g2d.fillRoundRect(npc.getX() - 47, npc.getY() - 47, 154, 44, 5, 5);
+						Font small = new Font("Helvetica", Font.BOLD, 12);
+						g2d.setFont(small);
+						g2d.drawString(npc.getDialog1(), npc.getX() - 40, npc.getY() - 32);
+						g2d.drawString(npc.getDialog2(), npc.getX() - 40, npc.getY() - 22);
+						g2d.drawString(npc.getDialog3(), npc.getX() - 40, npc.getY() - 12);
+					}
+				}
+			}
+			
+			if(monk.isVisible()) { 
+				g2d.setColor(Color.YELLOW);
+				//g2d.fillRoundRect(npc.getX() - 47, npc.getY() - 47, 154, 44, 5, 5);
+				Font big = new Font("Helvetica", Font.BOLD, 32);
+				g2d.setFont(big);
+				g2d.drawString("!", monk.getX() + 11, monk.getY() - 5);
 				
-				if(npc.isInterrupt()) {
+				g2d.drawImage(monk.getImage(), monk.getX(), monk.getY(), this);
+				if(monk.isInterrupt()) {
 					
 					g2d.setColor(new Color(115, 75, 20));
-					g2d.fillRoundRect(npc.getX() - 47, npc.getY() - 47, 154, 44, 10, 10);
+					g2d.fillRoundRect(monk.getX() - 107, monk.getY() - 95, 324, 92, 10, 10);
 					g2d.setColor(new Color(255, 250, 185));
-					g2d.fillRoundRect(npc.getX() - 45, npc.getY() - 45, 150, 40, 10, 10);
+					g2d.fillRoundRect(monk.getX() - 105, monk.getY() - 93, 320, 88, 10, 10);
 					g2d.setColor(new Color(115, 75, 20));
 					//g2d.fillRoundRect(npc.getX() - 47, npc.getY() - 47, 154, 44, 5, 5);
 					Font small = new Font("Helvetica", Font.BOLD, 12);
 					g2d.setFont(small);
-					g2d.drawString(npc.getDialog1(), npc.getX() - 40, npc.getY() - 32);
-					g2d.drawString(npc.getDialog2(), npc.getX() - 40, npc.getY() - 22);
-					g2d.drawString(npc.getDialog3(), npc.getX() - 40, npc.getY() - 12);
+					g2d.drawString("Witaj Wêdrowcze!", monk.getX() - 100, monk.getY() - 82);
+					g2d.drawString("W podziemiach domu przy po³udniowym murze", monk.getX() - 100, monk.getY() - 72);
+					g2d.drawString("zalêg³y siê potowry, które atakuj¹ nasze miaso w nocy.", monk.getX() - 100, monk.getY() - 62);
+					g2d.drawString("Pozb¹d¿ siê ich, a ludzie bêd¹ Ci wdziêczni.", monk.getX() - 100, monk.getY() - 52);
+					g2d.setColor(Color.RED);
+					g2d.drawString("U mnie mo¿esz ulepszyæ swój sprzêt i kupiæ mikstury.", monk.getX() - 100, monk.getY() - 42);
+					g2d.drawString("[E] - kup mikstury, koszt 1000 doœw.", monk.getX() - 100, monk.getY() - 32);
+					g2d.drawString("[A] - wzmocnij atak, koszt 1500 doœw.", monk.getX() - 100, monk.getY() - 22);
+					g2d.drawString("[D] - wzmocnij obronê, koszt 2000 doœw.", monk.getX() - 100, monk.getY() - 12);
 				}
 			}
-		}
-		
-		if(monk.isVisible()) { 
-			g2d.setColor(Color.YELLOW);
-			//g2d.fillRoundRect(npc.getX() - 47, npc.getY() - 47, 154, 44, 5, 5);
-			Font big = new Font("Helvetica", Font.BOLD, 32);
-			g2d.setFont(big);
-			g2d.drawString("!", monk.getX() + 11, monk.getY() - 5);
 			
-			g2d.drawImage(monk.getImage(), monk.getX(), monk.getY(), this);
-			if(monk.isInterrupt()) {
-				
-				g2d.setColor(new Color(115, 75, 20));
-				g2d.fillRoundRect(monk.getX() - 107, monk.getY() - 95, 324, 92, 10, 10);
-				g2d.setColor(new Color(255, 250, 185));
-				g2d.fillRoundRect(monk.getX() - 105, monk.getY() - 93, 320, 88, 10, 10);
-				g2d.setColor(new Color(115, 75, 20));
-				//g2d.fillRoundRect(npc.getX() - 47, npc.getY() - 47, 154, 44, 5, 5);
-				Font small = new Font("Helvetica", Font.BOLD, 12);
-				g2d.setFont(small);
-				g2d.drawString("Witaj Wêdrowcze!", monk.getX() - 100, monk.getY() - 82);
-				g2d.drawString("W podziemiach domu przy po³udniowym murze", monk.getX() - 100, monk.getY() - 72);
-				g2d.drawString("zalêg³y siê potowry, które atakuj¹ nasze miaso w nocy.", monk.getX() - 100, monk.getY() - 62);
-				g2d.drawString("Pozb¹d¿ siê ich, a ludzie bêd¹ Ci wdziêczni.", monk.getX() - 100, monk.getY() - 52);
-				g2d.setColor(Color.RED);
-				g2d.drawString("U mnie mo¿esz ulepszyæ swój sprzêt i kupiæ mikstury.", monk.getX() - 100, monk.getY() - 42);
-				g2d.drawString("[E] - kup mikstury, koszt 1000 doœw.", monk.getX() - 100, monk.getY() - 32);
-				g2d.drawString("[A] - wzmocnij atak, koszt 1500 doœw.", monk.getX() - 100, monk.getY() - 22);
-				g2d.drawString("[D] - wzmocnij obronê, koszt 2000 doœw.", monk.getX() - 100, monk.getY() - 12);
-			}
+			//rysowanie lewego panelu
+			g2d.drawImage(leftPanel, 1040, 0, this);
+			g2d.setColor(Color.WHITE);
+			Font small = new Font("Helvetica", Font.BOLD, 18);
+			g2d.setFont(small);
+			g2d.drawString("Health: " + hero.getHealth(), 1080, 45);
+			g2d.drawString("Experience: " + hero.getExp(), 1080, 95);
+			g2d.drawString("x " + hero.getPotions(), 1170, 180);
+			g2d.drawString("x " + hero.getAttack(), 1170, 260);
+			g2d.drawString("x " + hero.getArmor(), 1170, 340);
+			//g2d.drawString("Monsters: " + monsters.size(), 1080, 250);
+			g2d.drawString("( " + hero.getX() + ", " + hero.getY() + " )", 1180, 680);
+			g2d.setColor(Color.RED);
+			g2d.fillRect(1080, 50, 160, 10);
+			g2d.setColor(Color.GREEN);
+			g2d.fillRect(1080, 50, (int) (hero.getHealth() * 1.6), 10);
+			g2d.setColor(Color.BLACK);
+			g2d.fillRect(1080, 100, 160, 10);
+			g2d.setColor(Color.YELLOW);
+			g2d.fillRect(1080, 100, (int) (hero.getExp() / 100), 10);
+			g2d.drawImage(Toolkit.getDefaultToolkit().getImage("src/resources/potion/potion.png"), 1120, 150, this);
+			g2d.drawImage(Toolkit.getDefaultToolkit().getImage("src/resources/potion/sword.png"), 1120, 230, this);
+			g2d.drawImage(Toolkit.getDefaultToolkit().getImage("src/resources/potion/shield.png"), 1120, 310, this);
 		}
-		
-		//rysowanie lewego panelu
-		g2d.drawImage(leftPanel, 1040, 0, this);
-		g2d.setColor(Color.WHITE);
-		Font small = new Font("Helvetica", Font.BOLD, 18);
-		g2d.setFont(small);
-		g2d.drawString("Health: " + hero.getHealth(), 1080, 45);
-		g2d.drawString("Experience: " + hero.getExp(), 1080, 95);
-		g2d.drawString("x " + hero.getPotions(), 1170, 180);
-		g2d.drawString("x " + hero.getAttack(), 1170, 260);
-		g2d.drawString("x " + hero.getArmor(), 1170, 340);
-		//g2d.drawString("Monsters: " + monsters.size(), 1080, 250);
-		g2d.drawString("( " + hero.getX() + ", " + hero.getY() + " )", 1180, 680);
-		g2d.setColor(Color.RED);
-		g2d.fillRect(1080, 50, 160, 10);
-		g2d.setColor(Color.GREEN);
-		g2d.fillRect(1080, 50, (int) (hero.getHealth() * 1.6), 10);
-		g2d.setColor(Color.BLACK);
-		g2d.fillRect(1080, 100, 160, 10);
-		g2d.setColor(Color.YELLOW);
-		g2d.fillRect(1080, 100, (int) (hero.getExp() / 100), 10);
-		g2d.drawImage(Toolkit.getDefaultToolkit().getImage("src/resources/potion/potion.png"), 1120, 150, this);
-		g2d.drawImage(Toolkit.getDefaultToolkit().getImage("src/resources/potion/sword.png"), 1120, 230, this);
-		g2d.drawImage(Toolkit.getDefaultToolkit().getImage("src/resources/potion/shield.png"), 1120, 310, this);
 	}
 	
 	private void drawGameOver(Graphics g) {
@@ -409,8 +418,8 @@ public class MyPanel extends JPanel implements ActionListener {
 		if(mapSelector == 0 && hero.getY() > 550) {
 			
 			mapSelector = 1;
-			loadBackground(cityMap.getIndoorMap());
-			cityMap.initIndoor();
+			loadBackground(maps.getIndoorMap());
+			maps.initIndoor();
 			monk.setVisible(false);
 			monk.setX(10000);
 			monk.setY(10000);
@@ -421,8 +430,8 @@ public class MyPanel extends JPanel implements ActionListener {
 		if(mapSelector == 0) {
 			
 			mapSelector = 2;
-			loadBackground(cityMap.getTavernMap());
-			cityMap.initTavern();
+			loadBackground(maps.getTavernMap());
+			maps.initTavern();
 			monk.setVisible(false);
 			monk.setX(10000);
 			monk.setY(10000);
@@ -433,8 +442,8 @@ public class MyPanel extends JPanel implements ActionListener {
 		if(mapSelector == 2) {
 			
 			mapSelector = 0;
-			loadBackground(cityMap.getCityMap());
-			cityMap.initCityMap();
+			loadBackground(maps.getCityMap());
+			maps.initCityMap();
 			monk.setVisible(true);
 			monk.setX(NPC_X);
 			monk.setY(NPC_Y);
@@ -445,8 +454,8 @@ public class MyPanel extends JPanel implements ActionListener {
 		if(mapSelector == 1 && hero.getX() < 400 && hero.getY() > 450) {
 			
 			mapSelector = 0;
-			loadBackground(cityMap.getCityMap());
-			cityMap.initCityMap();
+			loadBackground(maps.getCityMap());
+			maps.initCityMap();
 			monk.setVisible(true);
 			monk.setX(NPC_X);
 			monk.setY(NPC_Y);
@@ -457,8 +466,8 @@ public class MyPanel extends JPanel implements ActionListener {
 		if(mapSelector == 1 && hero.getY() < 400) {
 			
 			mapSelector = 3;
-			loadBackground(cityMap.getCaveMap());
-			cityMap.initCave();
+			loadBackground(maps.getCaveMap());
+			maps.initCave();
 			monk.setVisible(false);
 			monk.setX(10000);
 			monk.setY(10000);
@@ -469,8 +478,8 @@ public class MyPanel extends JPanel implements ActionListener {
 		if(mapSelector == 3 && hero.getX() > 800) {
 			
 			mapSelector = 1;
-			loadBackground(cityMap.getIndoorMap());
-			cityMap.initIndoor();
+			loadBackground(maps.getIndoorMap());
+			maps.initIndoor();
 			monk.setVisible(false);
 			monk.setX(10000);
 			monk.setY(10000);
@@ -481,8 +490,8 @@ public class MyPanel extends JPanel implements ActionListener {
 		if(mapSelector == 3 && hero.getX() < 800) {
 			
 			mapSelector = 4;
-			loadBackground(cityMap.getChamberMap());
-			cityMap.initChamber();
+			loadBackground(maps.getChamberMap());
+			maps.initChamber();
 			monk.setVisible(false);
 			monk.setX(10000);
 			monk.setY(10000);
@@ -496,8 +505,8 @@ public class MyPanel extends JPanel implements ActionListener {
 		if(mapSelector == 4) {
 			
 			mapSelector = 3;
-			loadBackground(cityMap.getCaveMap());
-			cityMap.initCave();
+			loadBackground(maps.getCaveMap());
+			maps.initCave();
 			monk.setVisible(false);
 			monk.setX(10000);
 			monk.setY(10000);
@@ -516,9 +525,9 @@ public class MyPanel extends JPanel implements ActionListener {
         Rectangle r4 = monk.getBounds();
         Rectangle r5 = witch.getBounds();
 
-        if(cityMap.tableActions(r3) == 1)
+        if(maps.tableActions(r3) == 1)
         	hero.stop();
-        if(cityMap.tableActions(r3) == 2 && hero.isToEnter()) {
+        if(maps.tableActions(r3) == 2 && hero.isToEnter()) {
         	
         	int option = JOptionPane.showConfirmDialog(this,"Czy chcesz wejœæ do œrodka?", "", JOptionPane.YES_NO_OPTION);
         	if(option == 0) {
@@ -605,7 +614,7 @@ public class MyPanel extends JPanel implements ActionListener {
             	}
             	m.setVisible(false);
             }
-            if(cityMap.tableActions(r1) == 1)
+            if(maps.tableActions(r1) == 1)
             	 
             	m.setVisible(false); 
         }  
@@ -623,7 +632,7 @@ public class MyPanel extends JPanel implements ActionListener {
             	hero.getDamage(witch.getAttack());
                 m.setVisible(false); 
             }
-            if(cityMap.tableActions(r1) == 1)
+            if(maps.tableActions(r1) == 1)
             	 
             	m.setVisible(false); 
         }  
@@ -650,11 +659,16 @@ public class MyPanel extends JPanel implements ActionListener {
 
 		@Override
 		public void keyPressed(KeyEvent e) {
+			
 			hero.keyPressed(e);
+			
+			if(menu.isInMenu())
+				menu.keyPressed(e);
 		}
 
 		@Override
 		public void keyReleased(KeyEvent e) {
+			
 			hero.keyReleased(e);
 		}
 	}
