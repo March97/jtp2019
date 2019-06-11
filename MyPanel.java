@@ -33,13 +33,13 @@ public class MyPanel extends JPanel implements ActionListener {
 	private final int HERO_Y = 640;
 	private final int NPC_X = 770;
 	private final int NPC_Y = 170;
-	//private boolean inMenu;
+	private LeftPanel leftPanel;
 	private Menu menu;
 	private List<Npc> npcs;
 	private List<Monster> monsters;
 	private boolean inGame;
 	private Hero hero;
-	private Npc monk;
+	private Monk monk;
 	private Witch witch;
 	private int mapSelector;
 	private final int[][] monsterPos = {
@@ -56,7 +56,7 @@ public class MyPanel extends JPanel implements ActionListener {
 	};
 	private Maps maps;
 	private Image background;
-	private Image leftPanel;
+	//private Image leftPanel;
 	private Timer timer;
 	private final int DELAY = 15; //opoznienie animacji
 	
@@ -75,10 +75,6 @@ public class MyPanel extends JPanel implements ActionListener {
 		maps = new Maps();
 		mapSelector = 0;
 		loadBackground(maps.getCityMap());
-		//mapSelector = 3;
-		//loadBackground(cityMap.getCaveMap());
-		//cityMap.initCave();
-		loadLeftPanel("src/resources/wood/wood2.jpg");
 		
 		hero = new Hero(HERO_X, HERO_Y, "src/resources/paladyn/pal1-0-0.png",
 										"src/resources/paladyn/pal1-1-0.png",
@@ -115,11 +111,10 @@ public class MyPanel extends JPanel implements ActionListener {
 											"src/resources/witch/witch-3-3.png");
 		witch.setVisible(false);
 		monsters = new ArrayList<>();
-		//initMonsters();
+		leftPanel = new LeftPanel();
 		initNpcs();
-		monk = new Npc(NPC_X, NPC_Y, "src/resources/npc_szary/npc1-0-0.png") ;
+		monk = new Monk(NPC_X, NPC_Y, "src/resources/npc_szary/npc1-0-0.png") ;
 		inGame = true;
-		//inMenu = true;
 		timer = new Timer(DELAY, this);
 		timer.restart();
 	}
@@ -198,122 +193,25 @@ public class MyPanel extends JPanel implements ActionListener {
 		else {
 		
 			g2d.drawImage(background, 0, 0, this);
-			
-			if(hero.isVisible()) {
-				g2d.drawImage(hero.getImage(), hero.getX(), hero.getY(), this);
-			}
-			
-			if(witch.isVisible()) {
-				g2d.drawImage(witch.getImage(), witch.getX(), witch.getY(), this);
-				g2d.drawImage(witch.getImage(), witch.getX(), witch.getY(), this);
-				g2d.setColor(Color.RED);
-				g2d.fillRect(witch.getX(), witch.getY() + 50, 33, 5);
-				g2d.setColor(Color.CYAN);
-				g2d.fillRect(witch.getX(), witch.getY() + 50, (int) (witch.getHealth() / 120), 5);
-			}
+			hero.draw(g2d);
+			witch.draw(g2d);
 			
 			List<Missile> missiles = hero.getMissiles();
-			
-			for(Missile missile : missiles) {
-				if(missile.isVisible()) {
-					g2d.drawImage(missile.getImage(), missile.getX(), missile.getY(), this);
-				}
-			}
+			for(Missile missile : missiles)
+				missile.draw(g2d);
 			
 			List<Missile> witchMissiles = witch.getMissiles();
+			for(Missile missile : witchMissiles)
+				missile.draw(g2d);
 			
-			for(Missile missile : witchMissiles) {
-				if(missile.isVisible()) {
-					g2d.drawImage(missile.getImage(), missile.getX(), missile.getY(), this);
-				}
-			}
+			for(Monster monster : monsters) 
+				monster.draw(g2d);
 			
-			for(Monster monster : monsters) {
-				if(monster.isVisible() ) {
-					g2d.drawImage(monster.getImage(), monster.getX(), monster.getY(), this);
-					g2d.setColor(Color.RED);
-					g2d.fillRect(monster.getX(), monster.getY() + 50, 50, 5);
-					g2d.setColor(Color.GREEN);
-					g2d.fillRect(monster.getX(), monster.getY() + 50, (int) (monster.getHealth() / 2), 5);
-				}
-			}
+			for(Npc npc : npcs)
+				npc.draw(g2d);
 			
-			//Rectangle r1 = hero.getBounds();
-			for(Npc npc : npcs) {
-				if(npc.isVisible() ) {
-					g2d.drawImage(npc.getImage(), npc.getX(), npc.getY(), this);
-					//Rectangle r2 = npc.getBounds();
-					
-					if(npc.isInterrupt()) {
-						
-						g2d.setColor(new Color(115, 75, 20));
-						g2d.fillRoundRect(npc.getX() - 47, npc.getY() - 47, 154, 44, 10, 10);
-						g2d.setColor(new Color(255, 250, 185));
-						g2d.fillRoundRect(npc.getX() - 45, npc.getY() - 45, 150, 40, 10, 10);
-						g2d.setColor(new Color(115, 75, 20));
-						//g2d.fillRoundRect(npc.getX() - 47, npc.getY() - 47, 154, 44, 5, 5);
-						Font small = new Font("Helvetica", Font.BOLD, 12);
-						g2d.setFont(small);
-						g2d.drawString(npc.getDialog1(), npc.getX() - 40, npc.getY() - 32);
-						g2d.drawString(npc.getDialog2(), npc.getX() - 40, npc.getY() - 22);
-						g2d.drawString(npc.getDialog3(), npc.getX() - 40, npc.getY() - 12);
-					}
-				}
-			}
-			
-			if(monk.isVisible()) { 
-				g2d.setColor(Color.YELLOW);
-				//g2d.fillRoundRect(npc.getX() - 47, npc.getY() - 47, 154, 44, 5, 5);
-				Font big = new Font("Helvetica", Font.BOLD, 32);
-				g2d.setFont(big);
-				g2d.drawString("!", monk.getX() + 11, monk.getY() - 5);
-				
-				g2d.drawImage(monk.getImage(), monk.getX(), monk.getY(), this);
-				if(monk.isInterrupt()) {
-					
-					g2d.setColor(new Color(115, 75, 20));
-					g2d.fillRoundRect(monk.getX() - 107, monk.getY() - 95, 324, 92, 10, 10);
-					g2d.setColor(new Color(255, 250, 185));
-					g2d.fillRoundRect(monk.getX() - 105, monk.getY() - 93, 320, 88, 10, 10);
-					g2d.setColor(new Color(115, 75, 20));
-					//g2d.fillRoundRect(npc.getX() - 47, npc.getY() - 47, 154, 44, 5, 5);
-					Font small = new Font("Helvetica", Font.BOLD, 12);
-					g2d.setFont(small);
-					g2d.drawString("Witaj Wêdrowcze!", monk.getX() - 100, monk.getY() - 82);
-					g2d.drawString("W podziemiach domu przy po³udniowym murze", monk.getX() - 100, monk.getY() - 72);
-					g2d.drawString("zalêg³y siê potowry, które atakuj¹ nasze miaso w nocy.", monk.getX() - 100, monk.getY() - 62);
-					g2d.drawString("Pozb¹d¿ siê ich, a ludzie bêd¹ Ci wdziêczni.", monk.getX() - 100, monk.getY() - 52);
-					g2d.setColor(Color.RED);
-					g2d.drawString("U mnie mo¿esz ulepszyæ swój sprzêt i kupiæ mikstury.", monk.getX() - 100, monk.getY() - 42);
-					g2d.drawString("[E] - kup mikstury, koszt 1000 doœw.", monk.getX() - 100, monk.getY() - 32);
-					g2d.drawString("[A] - wzmocnij atak, koszt 1500 doœw.", monk.getX() - 100, monk.getY() - 22);
-					g2d.drawString("[D] - wzmocnij obronê, koszt 2000 doœw.", monk.getX() - 100, monk.getY() - 12);
-				}
-			}
-			
-			//rysowanie lewego panelu
-			g2d.drawImage(leftPanel, 1040, 0, this);
-			g2d.setColor(Color.WHITE);
-			Font small = new Font("Helvetica", Font.BOLD, 18);
-			g2d.setFont(small);
-			g2d.drawString("Health: " + hero.getHealth(), 1080, 45);
-			g2d.drawString("Experience: " + hero.getExp(), 1080, 95);
-			g2d.drawString("x " + hero.getPotions(), 1170, 180);
-			g2d.drawString("x " + hero.getAttack(), 1170, 260);
-			g2d.drawString("x " + hero.getArmor(), 1170, 340);
-			//g2d.drawString("Monsters: " + monsters.size(), 1080, 250);
-			g2d.drawString("( " + hero.getX() + ", " + hero.getY() + " )", 1180, 680);
-			g2d.setColor(Color.RED);
-			g2d.fillRect(1080, 50, 160, 10);
-			g2d.setColor(Color.GREEN);
-			g2d.fillRect(1080, 50, (int) (hero.getHealth() * 1.6), 10);
-			g2d.setColor(Color.BLACK);
-			g2d.fillRect(1080, 100, 160, 10);
-			g2d.setColor(Color.YELLOW);
-			g2d.fillRect(1080, 100, (int) (hero.getExp() / 100), 10);
-			g2d.drawImage(Toolkit.getDefaultToolkit().getImage("src/resources/potion/potion.png"), 1120, 150, this);
-			g2d.drawImage(Toolkit.getDefaultToolkit().getImage("src/resources/potion/sword.png"), 1120, 230, this);
-			g2d.drawImage(Toolkit.getDefaultToolkit().getImage("src/resources/potion/shield.png"), 1120, 310, this);
+			monk.draw(g2d);
+			leftPanel.draw(g2d,hero.getHealth(), hero.getExp(), hero.getPotions(), hero.getAttack(), hero.getArmor(), hero.getX(), hero.getY());
 		}
 	}
 	
@@ -649,11 +547,11 @@ public class MyPanel extends JPanel implements ActionListener {
 		background = ii.getImage();	
 	}
 	
-	protected void loadLeftPanel(String imageName) {
+	/*protected void loadLeftPanel(String imageName) {
 		
 		ImageIcon ii = new ImageIcon(imageName);
 		leftPanel = ii.getImage();	
-	}
+	}*/
 
 	public class TAdapter extends KeyAdapter{
 

@@ -1,5 +1,6 @@
 package jtp2019;
 
+import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +42,11 @@ public class Hero extends WalkAnimation{
 		wantDef = false;
 		loadImage("src/resources/paladyn/pal1-0-0.png");
 		getImageDimensions();
+	}
+	
+	public void draw(Graphics2D g2d) {
+		if(visible)
+			g2d.drawImage(getImage(), getX(), getY(), null);
 	}
 	
 	public void move(int b_width, int b_height) {

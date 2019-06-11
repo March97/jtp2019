@@ -1,5 +1,7 @@
 package jtp2019;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +30,17 @@ public class Witch extends WalkAnimation {
 		missiles = new ArrayList<>();
 		toFire = false;
 		lastFire = 520;
+	}
+	
+	public void draw (Graphics2D g2d) {
+		if(visible) {
+			g2d.drawImage(getImage(), getX(), getY(), null);
+			g2d.drawImage(getImage(), getX(), getY(), null);
+			g2d.setColor(Color.RED);
+			g2d.fillRect(getX(), getY() + 50, 33, 5);
+			g2d.setColor(Color.CYAN);
+			g2d.fillRect(getX(), getY() + 50, (int) (getHealth() / 120), 5);
+		}
 	}
 	
 	public void move() {

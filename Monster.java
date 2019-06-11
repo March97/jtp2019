@@ -1,5 +1,8 @@
 package jtp2019;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
+
 public class Monster extends WalkAnimation {
 	
 	private int health;
@@ -18,6 +21,16 @@ public class Monster extends WalkAnimation {
 		health = 100;
 		loadImage("src/resources/monster/monster-0-0.png");
 		getImageDimensions();
+	}
+	
+	public void draw(Graphics2D g2d) {
+		if(visible) {
+			g2d.drawImage(getImage(), getX(), getY(), null);
+			g2d.setColor(Color.RED);
+			g2d.fillRect(getX(), getY() + 50, 50, 5);
+			g2d.setColor(Color.GREEN);
+			g2d.fillRect(getX(), getY() + 50, (int) (getHealth() / 2), 5);
+		}
 	}
 	
 	public void move(int dx, int dy, int b_width, int b_height) {

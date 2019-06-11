@@ -1,5 +1,7 @@
 package jtp2019;
 
+import java.awt.Graphics2D;
+
 public class Missile extends Sprite {
 	
 	private final int MISSILE_SPEED = 5;
@@ -19,6 +21,11 @@ public class Missile extends Sprite {
 		this.dy = dy;
 		loadImage(image);
 		getImageDimensions();
+	}
+	
+	public void draw(Graphics2D g2d) {
+		if(visible)
+			g2d.drawImage(getImage(), getX(), getY(), null);
 	}
 
 	public void move(int b_width, int b_height) {

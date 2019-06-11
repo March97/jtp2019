@@ -1,5 +1,9 @@
 package jtp2019;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+
 public class Npc extends Sprite{
 	
 	private String dialog1 = "Daj mi spokój. Lepiej";
@@ -17,6 +21,26 @@ public class Npc extends Sprite{
 		
 		loadImage(string);
 		getImageDimensions();
+	}
+	
+	public void draw(Graphics2D g2d) {
+		if(visible) {
+			g2d.drawImage(getImage(), getX(), getY(), null);
+			if(interrupt)
+				drawDialog(g2d);
+		}
+	}
+	
+	private void drawDialog(Graphics2D g2d) {
+		g2d.setColor(new Color(115, 75, 20));
+		g2d.fillRoundRect(getX() - 47, getY() - 47, 154, 44, 10, 10);
+		g2d.setColor(new Color(255, 250, 185));
+		g2d.fillRoundRect(getX() - 45, getY() - 45, 150, 40, 10, 10);
+		g2d.setColor(new Color(115, 75, 20));
+		g2d.setFont(new Font("Helvetica", Font.BOLD, 12));
+		g2d.drawString(getDialog1(), getX() - 40, getY() - 32);
+		g2d.drawString(getDialog2(), getX() - 40, getY() - 22);
+		g2d.drawString(getDialog3(), getX() - 40, getY() - 12);
 	}
 
 	public String getDialog1() {
